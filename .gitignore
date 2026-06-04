@@ -1,9 +1,14 @@
 .terraform/
+.generated/
 *.tfstate
 *.tfstate.*
 *.tfplan
+*.tfvars
 crash.log
 crash.*.log
 *.log
 *.Zone.Identifier
 *:*Zone.Identifier
+cloud/w8/t2-to-t4-study-notes.txt
+cloud/w8/w8-knowledge-report.txt
+cloud/w8/day-b/t3-k8s-prestudy/troubleshooting-commands.md
