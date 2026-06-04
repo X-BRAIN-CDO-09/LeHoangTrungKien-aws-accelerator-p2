@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>K8s Demo App</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <p class="eyebrow">AWS Accelerator Lab</p>
+        <h1>K8s on AWS</h1>
+        <p class="lead">
+          A tiny static app served from a Kubernetes Pod, exposed through a
+          NodePort Service and an AWS Application Load Balancer.
+        </p>
+
+        <div class="status-grid" aria-label="Deployment status">
+          <article>
+            <span class="dot"></span>
+            <p>Runtime</p>
+            <strong>Kubernetes</strong>
+          </article>
+          <article>
+            <span class="dot"></span>
+            <p>Ingress path</p>
+            <strong>ALB to NodePort</strong>
+          </article>
+          <article>
+            <span class="dot"></span>
+            <p>Provisioning</p>
+            <strong>Terraform</strong>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
