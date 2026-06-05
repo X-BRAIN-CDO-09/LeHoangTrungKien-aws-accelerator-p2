@@ -6,7 +6,7 @@ exec > >(tee /var/log/k8s-lab-bootstrap.log) 2>&1
 export DEBIAN_FRONTEND=noninteractive
 
 apt-get update
-apt-get install -y ca-certificates curl apt-transport-https docker.io awscli
+apt-get install -y ca-certificates curl apt-transport-https docker.io
 
 fallocate -l 2G /swapfile
 chmod 600 /swapfile
@@ -35,15 +35,14 @@ nodes:
 EOF
 
 kind create cluster --name lab --config /tmp/kind-config.yaml
+mkdir -p /root/.kube
+if [ -f /.kube/config ]; then
+  cp /.kube/config /root/.kube/config
+else
+  kind export kubeconfig --name lab --kubeconfig /root/.kube/config
+fi
+export KUBECONFIG=/root/.kube/config
 kubectl wait --for=condition=Ready node --all --timeout=180s
-
-ECR_PASSWORD="$(aws ecr get-login-password --region ${aws_region})"
-kubectl create secret docker-registry ecr-creds \
-  --docker-server="${ecr_registry}" \
-  --docker-username="AWS" \
-  --docker-password="$ECR_PASSWORD" \
-  --dry-run=client \
-  -o yaml | kubectl apply -f -
 
 cat >/tmp/demo-app.yaml <<EOF
 apiVersion: apps/v1
@@ -62,8 +61,6 @@ spec:
       labels:
         app: demo-app
     spec:
-      imagePullSecrets:
-        - name: ecr-creds
       containers:
         - name: demo-app
           image: ${app_image}

@@ -45,8 +45,8 @@ variable "app_node_port" {
   }
 }
 
-variable "app_image_tag" {
-  description = "Tag for the locally built demo app image pushed to ECR."
+variable "app_image" {
+  description = "Public Docker image deployed into Kubernetes."
   type        = string
-  default     = "v1"
+  default     = "docker.io/kienlht/k8s-demo-app:v1"
 }

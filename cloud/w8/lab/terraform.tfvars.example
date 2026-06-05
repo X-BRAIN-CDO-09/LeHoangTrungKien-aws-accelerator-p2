@@ -2,7 +2,7 @@ aws_region    = "ap-southeast-1"
 project_name  = "k8s-alb-lab"
 instance_type = "t3.micro"
 app_node_port = 30080
-app_image_tag = "v1"
+app_image     = "docker.io/kienlht/k8s-demo-app:v1"
 
 # Optional: enable SSH access to the EC2 host.
 # enable_ssh = true

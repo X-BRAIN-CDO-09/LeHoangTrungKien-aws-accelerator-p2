@@ -4,8 +4,8 @@ output "alb_url" {
 }
 
 output "app_image" {
-  description = "ECR image URI deployed into Kubernetes."
-  value       = module.image_build.image_uri
+  description = "Public Docker image deployed into Kubernetes."
+  value       = var.app_image
 }
 
 output "ec2_public_ip" {

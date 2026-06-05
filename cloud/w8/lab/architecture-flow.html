@@ -291,24 +291,27 @@
             </p>
           </article>
           <article class="step">
-            <span class="badge aws">ECR</span>
-            <h3>Image Registry</h3>
-            <p>Terraform tạo ECR repository để lưu image của demo app.</p>
+            <span class="badge ok">Docker Hub</span>
+            <h3>Public Image</h3>
+            <p>
+              Image <code>docker.io/kienlht/k8s-demo-app:v1</code> đã được
+              build và push public trước.
+            </p>
           </article>
           <article class="step">
-            <span class="badge tf">Local</span>
-            <h3>Build & Push</h3>
+            <span class="badge tf">Terraform</span>
+            <h3>No Local Build</h3>
             <p>
-              Máy local build Docker image từ <code>demo-app</code> rồi push
-              lên ECR.
+              Terraform chỉ truyền image URI vào user data, không cần Docker
+              local khi apply.
             </p>
           </article>
           <article class="step">
             <span class="badge aws">AWS</span>
             <h3>Infra</h3>
             <p>
-              Terraform tạo VPC, subnets, security groups, EC2, IAM role, ALB
-              và target group.
+              Terraform tạo VPC, subnets, security groups, EC2, ALB và target
+              group.
             </p>
           </article>
           <article class="step">
@@ -325,15 +328,15 @@
           <div class="note">
             <strong>Thứ tự đảm bảo</strong>
             <p>
-              EC2 phụ thuộc vào bước image build/push, nên khi bootstrap chạy
-              thì image đã có sẵn trên ECR.
+              Image đã public trên Docker Hub trước khi apply, nên EC2 chỉ cần
+              pull image khi tạo Pod.
             </p>
           </div>
           <div class="note">
             <strong>Kubernetes pull image</strong>
             <p>
-              EC2 dùng IAM role để lấy ECR token, tạo image pull secret và để
-              Pod pull image từ ECR.
+              Image public nên Kubernetes không cần imagePullSecret, username
+              hoặc password registry.
             </p>
           </div>
           <div class="note">
