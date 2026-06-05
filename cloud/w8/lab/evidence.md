@@ -156,6 +156,10 @@ Bằng chứng:
 
 ### 6. ALB Forward Vào NodePort
 
+Sơ đồ traffic flow:
+
+![Traffic flow from ALB to kind NodePort](evidence/traffic-flow-kind-nodeport.png)
+
 Port matching:
 
 ```text
