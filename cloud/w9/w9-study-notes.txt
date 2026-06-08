@@ -1,0 +1,87 @@
+BÁO CÁO GHI CHÉP HỌC TẬP - W9
+
+Họ và Tên: Lê Hoàng Trung Kiên
+ID: XB-DN26-___
+
+Chủ đề W9: Deliver Smartly - GitOps, Observability và Canary Deployment
+
+Mục tiêu tuần:
+Trong tuần này, nội dung tập trung tìm hiểu cách triển khai hệ thống theo hướng an toàn và chuyên nghiệp hơn. Thay vì apply manifest thủ công, hệ thống sẽ được quản lý bằng GitOps thông qua ArgoCD. Đồng thời, ứng dụng cần có observability để theo dõi metrics, logs, traces, đo SLO/SLI và cảnh báo burn rate. Cuối cùng, quá trình deploy sẽ được cải thiện bằng canary deployment để giảm rủi ro khi phát hành phiên bản mới.
+
+Thứ 2 - GitOps và CI/CD
+
+Nội dung học:
+- GitOps principles.
+- GitHub Actions plan-on-PR và apply-on-merge.
+- ArgoCD và Flux.
+- App of Apps pattern.
+- Sync waves.
+- Rollback bằng git revert và kubectl rollout undo.
+
+Ghi chú chính:
+- Git là nơi lưu desired state của hệ thống.
+- ArgoCD theo dõi repository và tự động đồng bộ cluster theo trạng thái trong Git.
+- Khi rollback trong GitOps, nên ưu tiên git revert để tránh drift giữa Git và cluster.
+- kubectl rollout undo chỉ nên dùng trong tình huống khẩn cấp, sau đó cần cập nhật lại Git.
+
+Thứ 3 - Observability, SLO, SLI và OpenTelemetry
+
+Nội dung học:
+- OpenTelemetry SDK và Collector.
+- Prometheus, Grafana và Loki.
+- Metrics, logs và traces.
+- SLI/SLO cho availability và latency.
+- Multi-window burn rate alert.
+
+Ghi chú chính:
+- Observability giúp hiểu được hệ thống đang hoạt động như thế nào dựa trên dữ liệu thực tế.
+- Metrics dùng để đo lường, logs dùng để điều tra chi tiết, traces dùng để theo dõi luồng request.
+- SLI là chỉ số đo chất lượng dịch vụ, còn SLO là mục tiêu chất lượng cần đạt.
+- Burn rate cho biết tốc độ tiêu hao error budget.
+- Multi-window burn rate giúp phát hiện cả lỗi nghiêm trọng xảy ra nhanh và lỗi kéo dài âm thầm.
+
+Thứ 4 - Progressive Delivery và Canary
+
+Nội dung học:
+- Argo Rollouts.
+- Rollout CRD.
+- Canary strategy.
+- AnalysisTemplate với Prometheus query.
+- Abort criteria.
+- Kết hợp canary với burn-rate thinking.
+
+Ghi chú chính:
+- Canary deployment giúp đưa phiên bản mới đến một phần nhỏ traffic trước khi rollout toàn bộ.
+- Argo Rollouts có thể tự động tăng traffic nếu metric tốt.
+- Nếu metric xấu, rollout có thể tự động abort để giảm ảnh hưởng đến người dùng.
+- AnalysisTemplate dùng Prometheus query để đánh giá chất lượng phiên bản mới.
+
+Thứ 5 - Lab GitOps-ify W8 Platform
+
+Nội dung thực hành:
+- Chuyển W8 platform sang GitOps-managed.
+- Tạo ArgoCD Application.
+- Cấu hình observability stack.
+- Bắt đầu tích hợp canary rollout.
+
+Ghi chú lab:
+- ArgoCD sync status:
+- Application health:
+- Prometheus target:
+- Grafana dashboard:
+- Loki logs:
+
+Thứ 6 - Hoàn thiện Lab và Show-and-Tell
+
+Nội dung thực hành:
+- Hoàn thiện observability.
+- Kiểm tra SLO và burn-rate alert.
+- Demo canary rollout.
+- Demo auto-abort khi metric xấu.
+
+Ghi chú demo:
+- Good release result:
+- Bad release result:
+- Evidence:
+- Bài học rút ra:
+

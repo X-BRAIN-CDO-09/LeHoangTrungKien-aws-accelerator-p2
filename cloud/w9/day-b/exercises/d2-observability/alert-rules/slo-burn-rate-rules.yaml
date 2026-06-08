@@ -1,0 +1,57 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: demo-app-slo-burn-rate
+  namespace: observability
+spec:
+  groups:
+    - name: demo-app.slo
+      rules:
+        - alert: DemoAppFastBurnRate
+          expr: |
+            (
+              1 - (
+                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[5m]))
+                /
+                sum(rate(http_requests_total{app="demo-app"}[5m]))
+              )
+            ) > 0.02
+            and
+            (
+              1 - (
+                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[1h]))
+                /
+                sum(rate(http_requests_total{app="demo-app"}[1h]))
+              )
+            ) > 0.02
+          for: 2m
+          labels:
+            severity: critical
+          annotations:
+            summary: Demo app is burning error budget quickly
+            description: Fast burn-rate alert using 5m and 1h windows.
+
+        - alert: DemoAppSlowBurnRate
+          expr: |
+            (
+              1 - (
+                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[30m]))
+                /
+                sum(rate(http_requests_total{app="demo-app"}[30m]))
+              )
+            ) > 0.005
+            and
+            (
+              1 - (
+                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[6h]))
+                /
+                sum(rate(http_requests_total{app="demo-app"}[6h]))
+              )
+            ) > 0.005
+          for: 15m
+          labels:
+            severity: warning
+          annotations:
+            summary: Demo app is steadily burning error budget
+            description: Slow burn-rate alert using 30m and 6h windows.
+

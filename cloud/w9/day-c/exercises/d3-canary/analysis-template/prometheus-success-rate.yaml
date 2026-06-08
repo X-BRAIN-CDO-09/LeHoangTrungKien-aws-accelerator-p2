@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: demo-app-success-rate
+  namespace: demo
+spec:
+  metrics:
+    - name: success-rate
+      interval: 30s
+      count: 3
+      failureLimit: 1
+      provider:
+        prometheus:
+          address: http://prometheus-operated.observability.svc.cluster.local:9090
+          query: |
+            sum(rate(http_requests_total{app="demo-app",status!~"5.."}[5m]))
+            /
+            sum(rate(http_requests_total{app="demo-app"}[5m]))
+      successCondition: result[0] >= 0.99
+

@@ -1,0 +1,45 @@
+name: W9 Terraform Plan and Apply
+
+on:
+  pull_request:
+    paths:
+      - "cloud/w8/lab/**"
+      - "cloud/w9/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "cloud/w8/lab/**"
+      - "cloud/w9/**"
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloud/w8/lab
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Terraform plan on PR
+        if: github.event_name == 'pull_request'
+        run: terraform plan
+
+      - name: Terraform apply on merge
+        if: github.event_name == 'push'
+        run: terraform apply -auto-approve
+

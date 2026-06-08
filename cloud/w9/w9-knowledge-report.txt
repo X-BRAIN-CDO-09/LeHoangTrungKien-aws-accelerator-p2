@@ -1,0 +1,78 @@
+BÁO CÁO KIẾN THỨC ĐÃ HỌC - W9
+
+Họ và Tên: Lê Hoàng Trung Kiên
+ID: XB-DN26-___
+
+Thứ 2: GitOps và CI/CD
+
+Trong ngày đầu tiên của W9, nội dung tập trung tìm hiểu GitOps và cách kết hợp CI/CD để triển khai hạ tầng, ứng dụng an toàn hơn. Qua đó có thể hiểu rằng với GitOps, Git không chỉ là nơi lưu source code mà còn là nơi lưu trạng thái mong muốn của hệ thống.
+
+Các kiến thức trọng tâm đã nắm bắt:
+
+1. GitOps Principles
+Ghi nhận được GitOps là phương pháp quản lý hạ tầng và ứng dụng dựa trên Git. Mọi thay đổi cần được commit, review và merge trước khi được đồng bộ vào cluster. Cách làm này giúp hệ thống dễ kiểm soát hơn, có lịch sử thay đổi rõ ràng và giảm việc thao tác thủ công trực tiếp trên Kubernetes.
+
+2. GitHub Actions
+Đã tìm hiểu cách dùng GitHub Actions để tự động kiểm tra thay đổi. Với pull request, workflow có thể chạy validate hoặc plan để xem trước thay đổi. Sau khi merge, hệ thống có thể apply hoặc để ArgoCD tự động sync theo trạng thái mới trong Git.
+
+3. ArgoCD và App of Apps
+Đã học cách ArgoCD theo dõi repository và đồng bộ tài nguyên Kubernetes theo manifest trong Git. Đồng thời biết App of Apps là mô hình dùng một root application để quản lý nhiều application con, giúp tổ chức hệ thống rõ ràng hơn khi có nhiều thành phần.
+
+4. Rollback
+Ghi nhận được rollback trong GitOps nên ưu tiên thực hiện bằng git revert vì cách này cập nhật lại desired state trong Git. Trong trường hợp khẩn cấp có thể dùng kubectl rollout undo, nhưng sau đó cần đồng bộ lại Git để tránh cấu hình trong cluster bị lệch so với repository.
+
+Thứ 3: Observability, SLO, SLI và OpenTelemetry
+
+Trong ngày thứ ba, nội dung tập trung vào observability để hiểu cách theo dõi sức khỏe hệ thống bằng metrics, logs và traces. Đồng thời tìm hiểu cách đặt mục tiêu chất lượng dịch vụ bằng SLO và cảnh báo khi hệ thống tiêu hao error budget quá nhanh.
+
+Các kiến thức trọng tâm đã nắm bắt:
+
+1. Observability
+Ghi nhận được observability giúp đội vận hành trả lời câu hỏi hệ thống đang chạy như thế nào, lỗi xảy ra ở đâu và ảnh hưởng đến người dùng ra sao. Metrics dùng để đo lường, logs giúp điều tra chi tiết, còn traces giúp theo dõi đường đi của request qua nhiều service.
+
+2. OpenTelemetry
+Đã tìm hiểu vai trò của OpenTelemetry trong việc chuẩn hóa cách thu thập telemetry data. Ứng dụng có thể dùng OTel SDK để phát sinh metrics, logs hoặc traces, sau đó gửi về OTel Collector để xử lý và chuyển tiếp đến các hệ thống như Prometheus.
+
+3. Prometheus, Grafana và Loki
+Ghi nhận được Prometheus dùng để thu thập và truy vấn metrics, Grafana dùng để hiển thị dashboard, còn Loki dùng để lưu trữ và tìm kiếm logs. Khi kết hợp các công cụ này, hệ thống sẽ dễ quan sát, debug và đánh giá chất lượng vận hành hơn.
+
+4. SLI, SLO và Burn Rate
+Đã học SLI là chỉ số đo chất lượng dịch vụ, ví dụ availability hoặc latency. SLO là mục tiêu cần đạt dựa trên SLI, ví dụ 99.9% request thành công. Burn rate cho biết tốc độ tiêu hao error budget. Multi-window burn rate alert giúp phát hiện cả lỗi nghiêm trọng trong thời gian ngắn và lỗi kéo dài trong nhiều giờ.
+
+Thứ 4: Progressive Delivery và Canary Deployment
+
+Trong ngày thứ tư, nội dung học tập trung về progressive delivery, đặc biệt là canary deployment với Argo Rollouts. Đây là cách triển khai phiên bản mới an toàn hơn bằng cách chỉ đưa một phần nhỏ traffic đến version mới trước khi rollout toàn bộ.
+
+Các kiến thức trọng tâm đã nắm bắt:
+
+1. Progressive Delivery
+Ghi nhận được progressive delivery giúp giảm rủi ro khi phát hành phần mềm. Thay vì cập nhật toàn bộ hệ thống ngay lập tức, phiên bản mới được triển khai từng bước và liên tục được kiểm tra bằng metrics thực tế.
+
+2. Argo Rollouts
+Đã tìm hiểu Rollout CRD của Argo Rollouts và cách nó thay thế Deployment truyền thống để hỗ trợ canary strategy. Rollout có thể điều chỉnh tỉ lệ traffic, pause giữa các bước và tự động tiếp tục hoặc dừng lại dựa trên kết quả phân tích.
+
+3. AnalysisTemplate
+Ghi nhận được AnalysisTemplate dùng để định nghĩa các phép kiểm tra tự động trong quá trình canary. Ví dụ, Argo Rollouts có thể query Prometheus để kiểm tra success rate hoặc latency. Nếu metric không đạt điều kiện, rollout sẽ bị abort.
+
+4. Canary Auto-Abort
+Đã nắm được ý tưởng tự động dừng rollout khi metric xấu. Điều này giúp hạn chế việc phiên bản lỗi ảnh hưởng đến toàn bộ người dùng và giúp đội vận hành phát hiện vấn đề sớm hơn.
+
+Thứ 5 và Thứ 6: Lab GitOps-ify W8 Platform
+
+Trong phần lab, các kiến thức đã học được áp dụng để nâng cấp W8 platform theo hướng GitOps-managed, có observability stack và hỗ trợ canary deployment.
+
+Các nội dung thực hành chính:
+
+1. GitOps-ify W8 Platform
+Chuyển hướng triển khai từ apply manifest thủ công sang quản lý bằng Git và ArgoCD. Khi manifest thay đổi trong repository, ArgoCD sẽ đồng bộ trạng thái mới vào cluster.
+
+2. Bolt-on Observability
+Bổ sung observability stack gồm Prometheus, Grafana, Loki và OpenTelemetry Collector để theo dõi metrics, logs và phục vụ việc đánh giá SLO.
+
+3. Canary Deployment
+Thực hành cấu hình Argo Rollouts và AnalysisTemplate để triển khai canary. Hệ thống có thể tăng traffic dần cho phiên bản mới nếu metric tốt, hoặc tự động abort nếu metric xấu.
+
+Kết luận
+
+Sau W9, có thể hiểu rõ hơn cách triển khai ứng dụng theo hướng an toàn và có kiểm soát. GitOps giúp giảm thao tác thủ công và đảm bảo cluster bám theo trạng thái trong Git. Observability giúp theo dõi sức khỏe hệ thống dựa trên metrics, logs và traces. Canary deployment giúp giảm rủi ro khi release bằng cách kiểm tra phiên bản mới theo từng bước trước khi triển khai toàn bộ. Đây là những kiến thức quan trọng để vận hành hệ thống cloud-native trong môi trường thực tế.
+
