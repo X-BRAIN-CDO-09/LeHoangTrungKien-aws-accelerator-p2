@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AWS Web App Project</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="panel">
+        <p class="eyebrow">AWS Accelerator Web App Project</p>
+        <h1>Web App on AWS</h1>
+        <p class="lead">
+          A public EC2 web server serves assets from a private S3 bucket and is
+          allowed to reach a private RDS MySQL database.
+        </p>
+
+        <div class="grid">
+          <article>
+            <span></span>
+            <p>Network</p>
+            <strong>VPC with public and private subnets</strong>
+          </article>
+          <article>
+            <span></span>
+            <p>Compute</p>
+            <strong>EC2 web server in a public subnet</strong>
+          </article>
+          <article>
+            <span></span>
+            <p>Data</p>
+            <strong>RDS MySQL in private subnets</strong>
+          </article>
+          <article>
+            <span></span>
+            <p>Assets</p>
+            <strong>Private encrypted S3 bucket</strong>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

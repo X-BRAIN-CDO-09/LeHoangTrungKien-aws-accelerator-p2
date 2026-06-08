@@ -1,0 +1,26 @@
+#!/bin/bash
+set -euxo pipefail
+
+exec > >(tee /var/log/aws-web-app-bootstrap.log) 2>&1
+
+export DEBIAN_FRONTEND=noninteractive
+
+apt-get update
+apt-get install -y nginx awscli
+
+systemctl enable --now nginx
+
+aws s3 sync "s3://${asset_bucket_name}/" /var/www/html/ --delete
+
+cat >/var/www/html/runtime.json <<EOF
+{
+  "databaseEndpoint": "${db_endpoint}",
+  "databaseName": "${db_name}",
+  "assetsBucket": "${asset_bucket_name}"
+}
+EOF
+
+chown -R www-data:www-data /var/www/html
+systemctl reload nginx
+
+curl -fsS http://127.0.0.1/ >/dev/null

@@ -1,0 +1,11 @@
+aws_region  = "ap-southeast-1"
+environment = "dev"
+
+# Keep SSH disabled by default. Enable only for debugging and restrict to your IP.
+enable_ssh = false
+ssh_cidr   = "203.0.113.10/32"
+
+# NAT Gateway is useful when private workloads need outbound Internet access,
+# but it adds cost. RDS alone does not need it for this lab.
+enable_nat_gateway = false
+
