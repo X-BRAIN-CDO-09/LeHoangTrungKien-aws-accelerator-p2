@@ -1,31 +1,44 @@
 # 01 - Nền tảng Observability
 
-## Observability là gì?
+## Từ monitoring đến observability
 
-Observability là khả năng hiểu trạng thái bên trong của hệ thống dựa trên các tín hiệu bên ngoài như metrics, logs và traces. Mục tiêu không chỉ là biết hệ thống có lỗi hay không, mà còn hiểu lỗi xảy ra ở đâu, khi nào và ảnh hưởng đến người dùng như thế nào.
+Monitoring thường bắt đầu bằng các câu hỏi đã biết trước, chẳng hạn CPU có vượt ngưỡng hay pod có bị restart hay không. Observability đi xa hơn: dùng dữ liệu hệ thống phát sinh để điều tra cả những vấn đề chưa được dự đoán trước.
 
-## Metrics
+Một hệ thống có observability tốt cần giúp trả lời được ba câu hỏi:
 
-Metrics là dữ liệu dạng số theo thời gian, ví dụ:
+- Người dùng có đang nhận được dịch vụ tốt không?
+- Nếu chất lượng giảm, thay đổi bắt đầu từ thời điểm nào?
+- Thành phần nào có liên quan đến sự cố?
 
-- Số lượng request mỗi giây.
-- Tỉ lệ lỗi.
-- CPU, memory.
-- Latency p95 hoặc p99.
+## Ba loại tín hiệu chính
 
-Metrics phù hợp để cảnh báo và quan sát xu hướng.
+### Metrics
 
-## Logs
+Metrics là các giá trị số được ghi nhận theo thời gian. Metrics phù hợp để quan sát xu hướng, xây dựng dashboard và tạo cảnh báo.
 
-Logs là các dòng sự kiện chi tiết do ứng dụng hoặc hệ thống sinh ra. Logs hữu ích khi cần điều tra nguyên nhân cụ thể của lỗi.
+Ví dụ:
 
-## Traces
+- Request rate cho biết lượng traffic.
+- Error rate thể hiện tỉ lệ request thất bại.
+- Latency p95 cho biết 95% request hoàn thành trong bao lâu.
+- CPU và memory phản ánh mức sử dụng tài nguyên.
 
-Traces theo dõi đường đi của một request qua nhiều service. Traces đặc biệt hữu ích trong hệ thống microservices vì một request có thể đi qua nhiều thành phần khác nhau.
+### Logs
 
-## Ba câu hỏi quan trọng
+Logs ghi lại các sự kiện cụ thể, thường bao gồm timestamp, mức độ lỗi, message và context liên quan. Khi dashboard cho thấy error rate tăng, logs hỗ trợ tìm nguyên nhân chi tiết.
 
-- Hệ thống có đang phục vụ người dùng tốt không?
-- Nếu không tốt, phần nào đang gây lỗi?
-- Lỗi này ảnh hưởng bao nhiêu người dùng và nghiêm trọng đến mức nào?
+Logs nên có cấu trúc rõ ràng và chứa thông tin như request ID hoặc trace ID để việc tìm kiếm dễ hơn.
 
+### Traces
+
+Trace mô tả hành trình của một request qua các service. Mỗi bước xử lý được biểu diễn bằng một span. Trace hữu ích khi latency tăng nhưng chưa biết thời gian bị tiêu tốn ở service nào.
+
+## Cách kết hợp tín hiệu
+
+Một luồng điều tra có thể bắt đầu từ cảnh báo error rate trên Prometheus, chuyển sang Grafana để xác định thời điểm xảy ra, dùng Loki để đọc log lỗi, rồi dùng trace ID để tìm request cụ thể.
+
+Không tín hiệu nào đủ mạnh khi đứng một mình. Giá trị thực tế đến từ khả năng liên kết metrics, logs và traces trong cùng một quá trình điều tra.
+
+## Ghi nhớ
+
+Observability không đồng nghĩa với việc tạo thật nhiều dashboard. Mục tiêu là thu thập đúng dữ liệu để đánh giá trải nghiệm người dùng và rút ngắn thời gian tìm nguyên nhân khi hệ thống có vấn đề.

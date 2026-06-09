@@ -9,49 +9,28 @@ spec:
       rules:
         - alert: DemoAppFastBurnRate
           expr: |
-            (
-              1 - (
-                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[5m]))
-                /
-                sum(rate(http_requests_total{app="demo-app"}[5m]))
-              )
-            ) > 0.02
+            demo_app:http_request_errors_per_requests:ratio_rate5m
+              > (14.4 * 0.001)
             and
-            (
-              1 - (
-                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[1h]))
-                /
-                sum(rate(http_requests_total{app="demo-app"}[1h]))
-              )
-            ) > 0.02
+            demo_app:http_request_errors_per_requests:ratio_rate1h
+              > (14.4 * 0.001)
           for: 2m
           labels:
             severity: critical
           annotations:
-            summary: Demo app is burning error budget quickly
-            description: Fast burn-rate alert using 5m and 1h windows.
+            summary: Demo app đang tiêu hao error budget rất nhanh
+            description: Error ratio vượt ngưỡng fast burn trên cả cửa sổ 5m và 1h.
 
         - alert: DemoAppSlowBurnRate
           expr: |
-            (
-              1 - (
-                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[30m]))
-                /
-                sum(rate(http_requests_total{app="demo-app"}[30m]))
-              )
-            ) > 0.005
+            demo_app:http_request_errors_per_requests:ratio_rate30m
+              > (6 * 0.001)
             and
-            (
-              1 - (
-                sum(rate(http_requests_total{app="demo-app",status!~"5.."}[6h]))
-                /
-                sum(rate(http_requests_total{app="demo-app"}[6h]))
-              )
-            ) > 0.005
+            demo_app:http_request_errors_per_requests:ratio_rate6h
+              > (6 * 0.001)
           for: 15m
           labels:
             severity: warning
           annotations:
-            summary: Demo app is steadily burning error budget
-            description: Slow burn-rate alert using 30m and 6h windows.
-
+            summary: Demo app đang tiêu hao error budget kéo dài
+            description: Error ratio vượt ngưỡng slow burn trên cả cửa sổ 30m và 6h.

@@ -26,10 +26,19 @@
 ## Checklist thực hành
 
 - [ ] Thêm cấu hình OTel Collector.
+- [ ] Deploy OTel Collector và kiểm tra các endpoint.
 - [ ] Xác nhận Prometheus scrape được metrics của ứng dụng.
 - [ ] Tạo ghi chú dashboard Grafana.
 - [ ] Thêm ví dụ truy vấn logs bằng Loki.
+- [ ] Tạo recording rules cho error ratio.
 - [ ] Thêm rule cảnh báo SLO burn rate.
+
+## Nội dung theory
+
+- `01-observability-foundation.md`: cách kết hợp metrics, logs và traces để điều tra hệ thống.
+- `02-opentelemetry.md`: instrumentation, OTel SDK, Collector và telemetry pipeline.
+- `03-sli-slo-burn-rate.md`: cách xây dựng SLI/SLO, error budget và multi-window burn rate.
+- `04-observability-stack.md`: vai trò của Prometheus, Grafana, Loki và OTel Collector.
 
 ## Cấu trúc thư mục
 

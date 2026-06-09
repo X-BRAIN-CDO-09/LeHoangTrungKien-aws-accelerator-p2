@@ -1,40 +1,69 @@
 # 03 - SLI, SLO và Burn Rate
 
+## Bắt đầu từ trải nghiệm người dùng
+
+SLO không nên bắt đầu từ việc CPU phải thấp hơn bao nhiêu. Người dùng quan tâm request có thành công và phản hồi có đủ nhanh hay không. Vì vậy, SLI nên đo chất lượng dịch vụ ở gần trải nghiệm người dùng nhất.
+
 ## SLI
 
-SLI là chỉ số đo chất lượng dịch vụ. Một SLI tốt nên phản ánh trải nghiệm thực tế của người dùng.
+SLI là phép đo thực tế của dịch vụ.
 
-Ví dụ:
+```text
+Availability SLI = good requests / valid requests
+Latency SLI      = requests nhanh hơn ngưỡng / valid requests
+```
 
-- Availability SLI = request thành công / tổng số request.
-- Latency SLI = request dưới 300ms / tổng số request.
+Good request cần được định nghĩa rõ. Ví dụ, HTTP `2xx`, `3xx` và một số `4xx` có thể vẫn là phản hồi hợp lệ, trong khi `5xx` thường được xem là lỗi phía dịch vụ.
 
 ## SLO
 
-SLO là mục tiêu chất lượng dựa trên SLI.
+SLO đặt mục tiêu cho SLI trong một khoảng thời gian.
 
 Ví dụ:
 
-- 99.9% request thành công trong 30 ngày.
-- 95% request có latency dưới 300ms trong 30 ngày.
+- Availability đạt ít nhất 99.9% trong cửa sổ 30 ngày.
+- 95% request hoàn thành dưới 300ms trong cửa sổ 30 ngày.
 
 ## Error Budget
 
-Error budget là phần lỗi được phép xảy ra mà vẫn không vi phạm SLO. Nếu SLO là 99.9%, hệ thống có 0.1% error budget.
+Error budget là phần không hoàn hảo được chấp nhận trong SLO.
+
+```text
+Error budget = 1 - SLO target
+```
+
+Với availability SLO là 99.9%, error budget là 0.1%. Nếu error budget bị tiêu hao quá nhanh, team cần ưu tiên độ ổn định thay vì tiếp tục release với tốc độ cũ.
 
 ## Burn Rate
 
-Burn rate cho biết hệ thống đang tiêu hao error budget nhanh hay chậm.
+Burn rate so sánh tốc độ lỗi hiện tại với tốc độ lỗi cho phép bởi SLO.
 
-- Burn rate cao: hệ thống đang lỗi nhiều, cần xử lý nhanh.
-- Burn rate thấp nhưng kéo dài: có thể là lỗi âm thầm, cần theo dõi.
+```text
+Burn rate = observed error ratio / allowed error ratio
+```
 
-## Multi-window Burn Rate
+- Burn rate bằng `1`: error budget đang được dùng đúng tốc độ cho phép.
+- Burn rate lớn hơn `1`: error budget sẽ hết sớm nếu tình trạng tiếp tục.
+- Burn rate rất cao: cần phản ứng nhanh vì chất lượng đang giảm mạnh.
 
-Kết hợp nhiều cửa sổ thời gian giúp cảnh báo chính xác hơn:
+## Vì sao cần nhiều cửa sổ?
 
-- Fast burn: 5m và 1h.
-- Slow burn: 30m và 6h.
+Chỉ dùng cửa sổ ngắn dễ tạo cảnh báo vì những spike nhỏ. Chỉ dùng cửa sổ dài lại phát hiện sự cố quá chậm. Multi-window burn-rate alert kết hợp cả hai:
 
-Fast burn giúp phát hiện sự cố lớn nhanh. Slow burn giúp phát hiện lỗi kéo dài nhưng ít ồn hơn.
+- Fast burn: `5m` và `1h`, phát hiện sự cố lớn đang diễn ra.
+- Slow burn: `30m` và `6h`, phát hiện lỗi nhỏ nhưng kéo dài.
 
+Hai cửa sổ trong cùng một cảnh báo phải cùng vượt ngưỡng. Cách này giảm nhiễu nhưng vẫn phát hiện được sự cố có ảnh hưởng thật.
+
+## Ngưỡng dùng trong lab
+
+Lab giả định availability SLO là `99.9%`, tương ứng error budget `0.001`.
+
+- Fast burn sử dụng hệ số `14.4`.
+- Slow burn sử dụng hệ số `6`.
+
+Ngưỡng error ratio được tính bằng `burn-rate factor × error budget`.
+
+## Ghi nhớ
+
+Alert tốt nên dựa trên triệu chứng người dùng đang gặp phải, chẳng hạn error rate hoặc latency cao. Việc alert trên SLO burn rate giúp cảnh báo gắn với mức độ ảnh hưởng thay vì chỉ báo từng thay đổi kỹ thuật nhỏ.

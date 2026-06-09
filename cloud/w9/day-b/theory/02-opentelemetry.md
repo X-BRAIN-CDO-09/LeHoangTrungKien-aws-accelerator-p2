@@ -1,32 +1,55 @@
 # 02 - OpenTelemetry
 
-## OpenTelemetry là gì?
+## Vai trò của OpenTelemetry
 
-OpenTelemetry là bộ tiêu chuẩn và công cụ mã nguồn mở dùng để thu thập telemetry data như metrics, logs và traces. OpenTelemetry giúp ứng dụng không bị phụ thuộc quá chặt vào một vendor cụ thể.
+Mỗi observability backend có thể sử dụng một cách thu thập dữ liệu khác nhau. Nếu ứng dụng tích hợp trực tiếp với từng công cụ, việc thay đổi backend sẽ tốn nhiều công sức.
 
-## OTel SDK
+OpenTelemetry cung cấp một cách chung để tạo, nhận, xử lý và chuyển telemetry data. Nhờ đó, ứng dụng có thể gửi dữ liệu theo chuẩn OTLP mà không cần phụ thuộc chặt vào Prometheus, Grafana hoặc một vendor cụ thể.
 
-OTel SDK được tích hợp vào ứng dụng để tạo ra telemetry data. Ví dụ ứng dụng có thể gửi:
+## Instrumentation và OTel SDK
 
-- Request count.
-- Request latency.
-- Error count.
-- Trace span.
+Instrumentation là quá trình bổ sung khả năng phát sinh telemetry cho ứng dụng. Có hai hướng phổ biến:
 
-## OTel Collector
+- Auto-instrumentation: thu thập dữ liệu với ít thay đổi source code.
+- Manual instrumentation: chủ động tạo metric hoặc span phù hợp với nghiệp vụ.
 
-OTel Collector nhận dữ liệu từ ứng dụng, xử lý và export đến hệ thống khác.
+OTel SDK chạy cùng ứng dụng và chịu trách nhiệm tạo dữ liệu như request count, latency, error count hoặc trace span.
 
-Luồng cơ bản:
+## Collector đứng giữa để làm gì?
+
+OTel Collector đóng vai trò trung gian giữa ứng dụng và observability backend:
 
 ```text
-Application -> OTel SDK -> OTel Collector -> Prometheus/Grafana/Tracing backend
+Application -> OTel SDK -> OTLP -> OTel Collector -> Observability backends
 ```
 
-## Thành phần Collector
+Đưa Collector vào giữa giúp ứng dụng không cần biết dữ liệu cuối cùng sẽ được gửi đến đâu. Collector cũng có thể batch, filter hoặc bổ sung thông tin trước khi export.
+
+## Cấu trúc một pipeline
 
 - Receiver: nhận dữ liệu.
-- Processor: xử lý dữ liệu, ví dụ batch hoặc filter.
-- Exporter: gửi dữ liệu đến nơi lưu trữ hoặc quan sát.
-- Pipeline: nối receiver, processor và exporter lại với nhau.
+- Processor: xử lý dữ liệu trước khi gửi tiếp.
+- Exporter: chuyển dữ liệu sang backend hoặc endpoint đích.
+- Service pipeline: xác định receiver, processor và exporter được dùng cho từng loại tín hiệu.
 
+Ví dụ:
+
+```yaml
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus, debug]
+```
+
+## Collector deployment patterns
+
+- Agent: Collector chạy gần workload, thường theo kiểu DaemonSet hoặc sidecar.
+- Gateway: nhiều workload gửi dữ liệu về một Collector trung tâm.
+
+Lab W9 sử dụng cách đơn giản gần với gateway: ứng dụng gửi OTLP đến một Collector trong namespace observability.
+
+## Ghi nhớ
+
+OTel SDK tạo telemetry trong ứng dụng. OTel Collector nhận và chuyển telemetry. Prometheus, Loki hoặc tracing backend mới là nơi lưu trữ và truy vấn dữ liệu.

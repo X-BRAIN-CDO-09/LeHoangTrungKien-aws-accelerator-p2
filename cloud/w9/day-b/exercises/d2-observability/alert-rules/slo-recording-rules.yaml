@@ -1,0 +1,32 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: demo-app-slo-recording-rules
+  namespace: observability
+spec:
+  groups:
+    - name: demo-app.slo.recording
+      rules:
+        - record: demo_app:http_request_errors_per_requests:ratio_rate5m
+          expr: |
+            sum(rate(http_requests_total{app="demo-app",status=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(http_requests_total{app="demo-app"}[5m])), 1e-9)
+
+        - record: demo_app:http_request_errors_per_requests:ratio_rate30m
+          expr: |
+            sum(rate(http_requests_total{app="demo-app",status=~"5.."}[30m]))
+            /
+            clamp_min(sum(rate(http_requests_total{app="demo-app"}[30m])), 1e-9)
+
+        - record: demo_app:http_request_errors_per_requests:ratio_rate1h
+          expr: |
+            sum(rate(http_requests_total{app="demo-app",status=~"5.."}[1h]))
+            /
+            clamp_min(sum(rate(http_requests_total{app="demo-app"}[1h])), 1e-9)
+
+        - record: demo_app:http_request_errors_per_requests:ratio_rate6h
+          expr: |
+            sum(rate(http_requests_total{app="demo-app",status=~"5.."}[6h]))
+            /
+            clamp_min(sum(rate(http_requests_total{app="demo-app"}[6h])), 1e-9)
