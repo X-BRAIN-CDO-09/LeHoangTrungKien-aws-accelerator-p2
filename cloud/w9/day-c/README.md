@@ -21,9 +21,23 @@
 
 - [ ] Cài Argo Rollouts controller.
 - [ ] Chuyển Deployment sang Rollout.
+- [ ] Tạo Service cho demo app.
 - [ ] Thêm AnalysisTemplate dùng Prometheus query.
+- [ ] Kết nối analysis với recording rule từ Day B.
 - [ ] Test canary thành công.
 - [ ] Test canary thất bại và xác nhận auto-abort.
+- [ ] Ghi lại AnalysisRun và Rollout status làm evidence.
+
+## Nội dung theory
+
+- `01-progressive-delivery.md`: vòng lặp deploy, quan sát và quyết định.
+- `02-argo-rollouts.md`: Rollout CRD, ReplicaSet, weight, pause, promote và abort.
+- `03-analysis-template.md`: AnalysisRun, Prometheus query và điều kiện đánh giá.
+- `04-canary-guardrails.md`: guardrails, good/bad release và forced-failure drill.
+
+## Prerequisite từ Day B
+
+Demo app W8 hiện là static nginx và chưa tự phát metric `http_requests_total`. Để chạy analysis thật, cần instrument ứng dụng hoặc cung cấp metric tương đương, sau đó cập nhật Prometheus query cho đúng tên metric và labels.
 
 ## Cấu trúc thư mục
 

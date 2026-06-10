@@ -1,22 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: demo-app-success-rate
+  name: demo-app-fast-burn
   namespace: demo
 spec:
   args:
     - name: prometheus-address
       value: http://prometheus-operated.observability.svc.cluster.local:9090
   metrics:
-    - name: success-rate
+    - name: fast-burn-guardrail
       interval: 30s
       count: 4
       failureLimit: 1
       consecutiveSuccessLimit: 3
-      successCondition: len(result) > 0 && result[0] >= 0.99
-      failureCondition: len(result) == 0 || result[0] < 0.99
+      successCondition: len(result) > 0 && result[0] < 0.0144
+      failureCondition: len(result) == 0 || result[0] >= 0.0144
       provider:
         prometheus:
           address: "{{args.prometheus-address}}"
           query: |
-            1 - demo_app:http_request_errors_per_requests:ratio_rate5m
+            demo_app:http_request_errors_per_requests:ratio_rate5m
