@@ -66,7 +66,6 @@ spec:
       canaryService: flipkart-backend-canary
       maxSurge: 1
       maxUnavailable: 0
-      scaleDownDelaySeconds: 30
       steps:
         - setWeight: 25
         - pause: {}
