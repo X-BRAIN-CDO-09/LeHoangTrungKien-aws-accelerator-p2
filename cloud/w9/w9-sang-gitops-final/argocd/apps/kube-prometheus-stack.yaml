@@ -98,9 +98,6 @@ spec:
               - name: email-alerts
                 email_configs:
                   - to: kienl8890@gmail.com
-                    from: alertmanager@flipkart.local
-                    smarthost: localhost:25
-                    require_tls: false
                     send_resolved: true
             inhibit_rules:
               - source_matchers:
