@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: backend
-          image: docker.io/kienlht/flipkart-backend:latest
+          image: flipkart-backend:v1
           imagePullPolicy: IfNotPresent
           ports:
             - name: http
@@ -29,18 +29,24 @@ spec:
               value: production
             - name: PORT
               value: "4000"
+            - name: APP_VERSION
+              value: "v1"
+            - name: ERROR_RATE
+              value: "0"
             - name: MONGO_URI
               value: mongodb://flipkart-mongodb:27017/flipkart
           envFrom:
             - secretRef:
                 name: flipkart-backend-secrets
           readinessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz
               port: http
             initialDelaySeconds: 10
             periodSeconds: 10
           livenessProbe:
-            tcpSocket:
+            httpGet:
+              path: /healthz
               port: http
             initialDelaySeconds: 30
             periodSeconds: 15
