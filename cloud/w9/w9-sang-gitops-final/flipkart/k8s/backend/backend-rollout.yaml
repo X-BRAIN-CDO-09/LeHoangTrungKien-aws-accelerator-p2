@@ -33,9 +33,9 @@ spec:
             - name: PORT
               value: "4000"
             - name: APP_VERSION
-              value: "v2-bad"
+              value: "v2-good"
             - name: ERROR_RATE
-              value: "0.5"
+              value: "0"
             - name: MONGO_URI
               value: mongodb://flipkart-mongodb:27017/flipkart
           envFrom:
