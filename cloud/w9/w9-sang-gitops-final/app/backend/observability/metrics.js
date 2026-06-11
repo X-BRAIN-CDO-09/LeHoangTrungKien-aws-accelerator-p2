@@ -46,8 +46,14 @@ const metricsMiddleware = (req, res, next) => {
   }
 
   const stopTimer = httpRequestDurationSeconds.startTimer();
+  let recorded = false;
 
-  res.on("finish", () => {
+  const recordMetrics = () => {
+    if (recorded) {
+      return;
+    }
+    recorded = true;
+
     const labels = {
       method: req.method,
       route: routeLabelFromRequest(req),
@@ -57,7 +63,10 @@ const metricsMiddleware = (req, res, next) => {
 
     httpRequestsTotal.inc(labels);
     stopTimer(labels);
-  });
+  };
+
+  res.once("finish", recordMetrics);
+  res.once("close", recordMetrics);
 
   return next();
 };

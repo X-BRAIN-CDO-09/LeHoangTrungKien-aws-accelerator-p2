@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: flipkart-backend
+  namespace: flipkart
+  labels:
+    app: flipkart-backend
+spec:
+  namespaceSelector:
+    matchNames:
+      - flipkart
+  selector:
+    matchLabels:
+      app: flipkart-backend
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s
+      scrapeTimeout: 10s

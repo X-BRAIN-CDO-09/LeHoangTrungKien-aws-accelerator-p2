@@ -63,6 +63,8 @@ kind: Service
 metadata:
   name: flipkart-backend
   namespace: flipkart
+  labels:
+    app: flipkart-backend
 spec:
   selector:
     app: flipkart-backend
