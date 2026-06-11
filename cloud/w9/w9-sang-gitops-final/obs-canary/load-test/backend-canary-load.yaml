@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backend-canary-load
+  namespace: flipkart
+  labels:
+    app: backend-canary-load
+spec:
+  restartPolicy: Always
+  containers:
+    - name: load
+      image: busybox:1.36
+      command:
+        - sh
+        - -c
+        - |
+          while true; do
+            wget -qO- http://flipkart-backend-canary:4000/api/v1/products >/dev/null || true
+            sleep 0.2
+          done
+      resources:
+        requests:
+          cpu: 10m
+          memory: 16Mi
+        limits:
+          cpu: 100m
+          memory: 32Mi

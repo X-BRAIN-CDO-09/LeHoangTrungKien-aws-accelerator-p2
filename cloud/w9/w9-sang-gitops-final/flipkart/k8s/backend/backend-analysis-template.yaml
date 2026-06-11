@@ -10,6 +10,24 @@ spec:
     - name: prometheus-address
       value: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
   metrics:
+    - name: canary-request-rate
+      interval: 30s
+      count: 4
+      failureLimit: 2
+      successCondition: len(result) > 0 && result[0] >= 0.1
+      failureCondition: len(result) == 0 || result[0] < 0.1
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            sum(
+              rate(
+                flipkart_http_requests_total{
+                  service="flipkart-backend-canary"
+                }[2m]
+              )
+            )
+
     - name: success-rate
       interval: 30s
       count: 4
@@ -22,11 +40,27 @@ spec:
           query: |
             1 - (
               (
-                sum(rate(flipkart_http_requests_total{status_code=~"5.."}[2m]))
+                sum(
+                  rate(
+                    flipkart_http_requests_total{
+                      service="flipkart-backend-canary",
+                      status_code=~"5.."
+                    }[2m]
+                  )
+                )
                 or vector(0)
               )
               /
-              clamp_min(sum(rate(flipkart_http_requests_total[2m])), 1e-9)
+              clamp_min(
+                sum(
+                  rate(
+                    flipkart_http_requests_total{
+                      service="flipkart-backend-canary"
+                    }[2m]
+                  )
+                ),
+                1e-9
+              )
             )
 
     - name: p95-latency
@@ -42,6 +76,10 @@ spec:
             histogram_quantile(
               0.95,
               sum by (le) (
-                rate(flipkart_http_request_duration_seconds_bucket[2m])
+                rate(
+                  flipkart_http_request_duration_seconds_bucket{
+                    service="flipkart-backend-canary"
+                  }[2m]
+                )
               )
             )

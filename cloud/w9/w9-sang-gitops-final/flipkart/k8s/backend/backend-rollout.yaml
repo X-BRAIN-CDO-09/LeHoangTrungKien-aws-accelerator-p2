@@ -1,5 +1,5 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
 metadata:
   name: flipkart-backend
   namespace: flipkart
@@ -8,7 +8,10 @@ metadata:
   labels:
     app: flipkart-backend
 spec:
-  replicas: 2
+  replicas: 4
+  revisionHistoryLimit: 3
+  minReadySeconds: 10
+  progressDeadlineSeconds: 600
   selector:
     matchLabels:
       app: flipkart-backend
@@ -57,18 +60,20 @@ spec:
             limits:
               cpu: 500m
               memory: 512Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: flipkart-backend
-  namespace: flipkart
-  labels:
-    app: flipkart-backend
-spec:
-  selector:
-    app: flipkart-backend
-  ports:
-    - name: http
-      port: 4000
-      targetPort: http
+  strategy:
+    canary:
+      stableService: flipkart-backend
+      canaryService: flipkart-backend-canary
+      maxSurge: 1
+      maxUnavailable: 0
+      scaleDownDelaySeconds: 30
+      steps:
+        - setWeight: 25
+        - pause: {}
+        - setWeight: 50
+        - pause:
+            duration: 30s
+        - analysis:
+            templates:
+              - templateName: flipkart-backend-quality
+        - setWeight: 100
