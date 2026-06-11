@@ -1,4 +1,4 @@
-name: W9 Terraform CI Reference
+name: W9 Terraform CI
 
 on:
   pull_request:
@@ -37,7 +37,7 @@ jobs:
         working-directory: cloud/w8/lab
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Configure AWS credentials with OIDC
@@ -52,7 +52,7 @@ jobs:
           terraform_version: "1.9.0"
           terraform_wrapper: false
 
-      - name: Terraform fmt
+      - name: Terraform format check
         run: terraform fmt -check -recursive
 
       - name: Terraform init
