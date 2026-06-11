@@ -1,0 +1,47 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: flipkart-backend-quality
+  namespace: flipkart
+  labels:
+    app: flipkart-backend
+spec:
+  args:
+    - name: prometheus-address
+      value: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+  metrics:
+    - name: success-rate
+      interval: 30s
+      count: 4
+      failureLimit: 2
+      successCondition: len(result) > 0 && result[0] >= 0.95
+      failureCondition: len(result) == 0 || result[0] < 0.95
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            1 - (
+              (
+                sum(rate(flipkart_http_requests_total{status_code=~"5.."}[2m]))
+                or vector(0)
+              )
+              /
+              clamp_min(sum(rate(flipkart_http_requests_total[2m])), 1e-9)
+            )
+
+    - name: p95-latency
+      interval: 30s
+      count: 4
+      failureLimit: 2
+      successCondition: len(result) > 0 && result[0] <= 0.5
+      failureCondition: len(result) == 0 || result[0] > 0.5
+      provider:
+        prometheus:
+          address: "{{args.prometheus-address}}"
+          query: |
+            histogram_quantile(
+              0.95,
+              sum by (le) (
+                rate(flipkart_http_request_duration_seconds_bucket[2m])
+              )
+            )

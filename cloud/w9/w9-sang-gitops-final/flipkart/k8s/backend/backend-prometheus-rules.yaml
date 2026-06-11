@@ -1,0 +1,106 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: flipkart-backend-slo
+  namespace: flipkart
+  labels:
+    app: flipkart-backend
+spec:
+  groups:
+    - name: flipkart-backend.sli.recording
+      interval: 15s
+      rules:
+        - record: flipkart_backend:http_requests:rate2m
+          expr: |
+            sum(rate(flipkart_http_requests_total[2m]))
+
+        - record: flipkart_backend:http_errors:ratio_rate2m
+          expr: |
+            (
+              sum(rate(flipkart_http_requests_total{status_code=~"5.."}[2m]))
+              or vector(0)
+            )
+            /
+            clamp_min(sum(rate(flipkart_http_requests_total[2m])), 1e-9)
+
+        - record: flipkart_backend:http_errors:ratio_rate5m
+          expr: |
+            (
+              sum(rate(flipkart_http_requests_total{status_code=~"5.."}[5m]))
+              or vector(0)
+            )
+            /
+            clamp_min(sum(rate(flipkart_http_requests_total[5m])), 1e-9)
+
+        - record: flipkart_backend:http_errors:ratio_rate15m
+          expr: |
+            (
+              sum(rate(flipkart_http_requests_total{status_code=~"5.."}[15m]))
+              or vector(0)
+            )
+            /
+            clamp_min(sum(rate(flipkart_http_requests_total[15m])), 1e-9)
+
+        - record: flipkart_backend:http_success:ratio_rate5m
+          expr: |
+            1 - flipkart_backend:http_errors:ratio_rate5m
+
+        - record: flipkart_backend:http_request_duration_seconds:p95_rate5m
+          expr: |
+            histogram_quantile(
+              0.95,
+              sum by (le) (
+                rate(flipkart_http_request_duration_seconds_bucket[5m])
+              )
+            )
+
+        - record: flipkart_backend:error_budget:burn_rate5m
+          expr: |
+            flipkart_backend:http_errors:ratio_rate5m / 0.005
+
+        - record: flipkart_backend:error_budget:burn_rate15m
+          expr: |
+            flipkart_backend:http_errors:ratio_rate15m / 0.005
+
+    - name: flipkart-backend.slo.alerts
+      interval: 15s
+      rules:
+        - alert: FlipkartBackendFastBurn
+          expr: |
+            flipkart_backend:http_errors:ratio_rate2m > 0.10
+            and
+            flipkart_backend:http_errors:ratio_rate5m > 0.10
+          for: 1m
+          labels:
+            severity: critical
+            service: flipkart-backend
+            slo: availability-99.5
+          annotations:
+            summary: Flipkart backend đang tiêu hao error budget rất nhanh
+            description: Error ratio vượt 10% trên cả cửa sổ 2 phút và 5 phút.
+
+        - alert: FlipkartBackendSlowBurn
+          expr: |
+            flipkart_backend:http_errors:ratio_rate5m > 0.03
+            and
+            flipkart_backend:http_errors:ratio_rate15m > 0.03
+          for: 3m
+          labels:
+            severity: warning
+            service: flipkart-backend
+            slo: availability-99.5
+          annotations:
+            summary: Flipkart backend đang tiêu hao error budget kéo dài
+            description: Error ratio vượt 3% trên cả cửa sổ 5 phút và 15 phút.
+
+        - alert: FlipkartBackendHighP95Latency
+          expr: |
+            flipkart_backend:http_request_duration_seconds:p95_rate5m > 0.5
+          for: 3m
+          labels:
+            severity: warning
+            service: flipkart-backend
+            slo: latency-p95-500ms
+          annotations:
+            summary: P95 latency của Flipkart backend đang cao
+            description: P95 latency vượt 500ms trong ít nhất 3 phút.
