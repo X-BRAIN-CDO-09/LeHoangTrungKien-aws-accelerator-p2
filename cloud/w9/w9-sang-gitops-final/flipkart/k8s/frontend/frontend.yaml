@@ -1,0 +1,89 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flipkart-frontend-nginx
+  namespace: flipkart
+data:
+  default.conf: |
+    server {
+      listen 80;
+      server_name _;
+
+      location /api/ {
+        proxy_pass http://flipkart-backend:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+      }
+
+      location / {
+        root /usr/share/nginx/html;
+        try_files $uri $uri/ /index.html;
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flipkart-frontend
+  namespace: flipkart
+  labels:
+    app: flipkart-frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: flipkart-frontend
+  template:
+    metadata:
+      labels:
+        app: flipkart-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: docker.io/kienlht/flipkart-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: flipkart-frontend-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flipkart-frontend
+  namespace: flipkart
+spec:
+  selector:
+    app: flipkart-frontend
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

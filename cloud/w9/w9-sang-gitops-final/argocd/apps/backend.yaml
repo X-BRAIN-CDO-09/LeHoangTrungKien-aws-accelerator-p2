@@ -1,18 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: web
+  name: flipkart-backend
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
 spec:
   project: default
   source:
     repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
     targetRevision: main
-    path: cloud/w9/w9-sang-gitops-final/k8s
+    path: cloud/w9/w9-sang-gitops-final/flipkart/k8s/backend
   destination:
     server: https://kubernetes.default.svc
-    namespace: demo
+    namespace: flipkart
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
