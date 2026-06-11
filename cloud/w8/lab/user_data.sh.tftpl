@@ -8,6 +8,13 @@ export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y ca-certificates curl apt-transport-https docker.io
 
+if ! command -v amazon-ssm-agent >/dev/null 2>&1; then
+  snap install amazon-ssm-agent --classic
+fi
+
+systemctl enable --now snap.amazon-ssm-agent.amazon-ssm-agent.service ||
+  systemctl enable --now amazon-ssm-agent
+
 fallocate -l 2G /swapfile
 chmod 600 /swapfile
 mkswap /swapfile

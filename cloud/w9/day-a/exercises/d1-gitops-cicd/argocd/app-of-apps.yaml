@@ -6,9 +6,9 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-github-user>/<your-repo>.git
+    repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
     targetRevision: main
-    path: cloud/w9/day-a/argocd/apps
+    path: cloud/w9/day-a/exercises/d1-gitops-cicd/argocd/apps
     directory:
       recurse: true
   destination:
@@ -20,4 +20,3 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
-

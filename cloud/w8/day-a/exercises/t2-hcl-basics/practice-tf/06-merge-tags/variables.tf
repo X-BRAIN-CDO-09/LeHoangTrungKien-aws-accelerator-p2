@@ -20,8 +20,7 @@ variable "default_tags" {
   description = "Base tags that will be merged with standardized metadata tags."
   type        = map(string)
   default = {
-    Phase       = "2"
-    Week        = "8"
-    Environment = "override-me"
+    Phase = "2"
+    Week  = "8"
   }
 }

@@ -123,3 +123,82 @@ Ghi log ra file:
 minikube logs --file=logs.txt
 ```
 
+## 8. Note Terraform For Expression
+
+Phần này không thuộc Kubernetes, nhưng lưu lại để tra nhanh khi làm bài Terraform `05-for-expression`.
+
+Công thức tạo map bằng `for` expression:
+
+```hcl
+{
+  for item in list : key => value
+}
+```
+
+Dấu `:` nghĩa là sau đây là cách biến từng item thành kết quả. Dấu `=>` nghĩa là bên trái là key của map, bên phải là value của map.
+
+Ví dụ:
+
+```hcl
+services = ["api", "worker", "web"]
+```
+
+Nếu muốn map service gốc sang service name đầy đủ:
+
+```hcl
+service_map = {
+  for service in var.services : service => "${local.name_prefix}-${service}"
+}
+```
+
+Kết quả:
+
+```hcl
+{
+  api    = "xbrain-dev-api"
+  worker = "xbrain-dev-worker"
+  web    = "xbrain-dev-web"
+}
+```
+
+Dạng `k, v` với list:
+
+```hcl
+{
+  for k, v in var.services : v => "${local.name_prefix}-${v}"
+}
+```
+
+Với list, `k` là index và `v` là value:
+
+```text
+k = 0, v = "api"
+k = 1, v = "worker"
+k = 2, v = "web"
+```
+
+Nếu viết:
+
+```hcl
+{
+  for k, v in var.services : k => "${local.name_prefix}-${v}"
+}
+```
+
+thì key sẽ là index:
+
+```hcl
+{
+  0 = "xbrain-dev-api"
+  1 = "xbrain-dev-worker"
+  2 = "xbrain-dev-web"
+}
+```
+
+Trong bài `service_map`, nên dùng service name làm key, nên cách dễ đọc nhất là:
+
+```hcl
+service_map = {
+  for service in var.services : service => "${local.name_prefix}-${service}"
+}
+```

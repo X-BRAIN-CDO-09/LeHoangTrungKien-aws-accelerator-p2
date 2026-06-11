@@ -8,16 +8,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/<your-github-user>/<your-repo>.git
+    repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
     targetRevision: main
-    path: cloud/w8/lab/demo-app
+    path: cloud/w9/day-a/exercises/d1-gitops-cicd/manifests
   destination:
     server: https://kubernetes.default.svc
-    namespace: demo
+    namespace: default
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
-
