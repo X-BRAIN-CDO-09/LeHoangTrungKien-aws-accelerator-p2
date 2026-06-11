@@ -32,7 +32,7 @@ spec:
             - name: APP_VERSION
               value: "v1"
             - name: ERROR_RATE
-              value: "0"
+              value: "0.5"
             - name: MONGO_URI
               value: mongodb://flipkart-mongodb:27017/flipkart
           envFrom:
