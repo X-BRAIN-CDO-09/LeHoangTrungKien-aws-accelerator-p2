@@ -17,3 +17,4 @@ cloud/w9/t2-to-t4-practice-plan.md
 cloud/w9/END-TO-END-LAB-STEPS.md
 cloud/w9/w9-sang-gitops-final/LAB-7-CI-VALIDATION.md
 cloud/w9/w9-sang-gitops-final/app/package-lock.json
+cloud/w9/w9-sang-gitops-final/flipkart/k8s/backend/alertmanager-smtp-secret.yaml
