@@ -3,6 +3,9 @@
 Tài liệu này giải thích cách các file YAML trong `w9-lab-gitops-final` phối hợp
 với nhau để triển khai và vận hành ứng dụng Flipkart theo mô hình GitOps.
 
+Để xem giải thích chi tiết từng field trong manifest, đọc
+[`YAML-LINE-BY-LINE.md`](./YAML-LINE-BY-LINE.md).
+
 ## 1. Mục tiêu hệ thống
 
 Hệ thống hoàn chỉnh thực hiện luồng sau:

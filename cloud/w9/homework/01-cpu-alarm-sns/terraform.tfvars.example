@@ -1,0 +1,8 @@
+aws_region         = "ap-southeast-1"
+notification_email = "kienl8890@gmail.com"
+create_test_instance = true
+instance_id          = null
+
+# Optional test mode. Use this if you do not want to modify an existing EC2.
+# create_test_instance = true
+# instance_id          = null
