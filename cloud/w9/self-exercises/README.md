@@ -1,4 +1,4 @@
-# W9 Lab - GitOps-ify W8 Platform
+# W9 Self Exercises - GitOps, Observability và Canary
 
 ## Lab Goal
 
@@ -33,4 +33,3 @@ Convert the W8 platform into a GitOps-managed delivery flow with observability a
 - [ ] Loki query returns demo-app logs.
 - [ ] Canary rollout succeeds for a good version.
 - [ ] Canary rollout aborts for a bad version.
-

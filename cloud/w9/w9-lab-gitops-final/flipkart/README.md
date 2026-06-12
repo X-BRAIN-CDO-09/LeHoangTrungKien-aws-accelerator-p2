@@ -26,7 +26,7 @@ ArgoCD triển khai Kubernetes manifests, Helm chart hoặc Kustomize. ArgoCD kh
 Do repo `flipkart-mern` chưa có Dockerfile và Kubernetes manifests, child Application trỏ vào thư mục manifest trong repository GitOps hiện tại:
 
 ```text
-cloud/w9/w9-sang-gitops-final/flipkart/k8s
+cloud/w9/w9-lab-gitops-final/flipkart/k8s
 ```
 
 ## Các bước còn cần làm
@@ -37,14 +37,14 @@ Chạy từ thư mục gốc repository:
 
 ```bash
 docker build \
-  -f cloud/w9/w9-sang-gitops-final/app/Dockerfile.backend \
+  -f cloud/w9/w9-lab-gitops-final/app/Dockerfile.backend \
   -t docker.io/kienlht/flipkart-backend:latest \
-  cloud/w9/w9-sang-gitops-final/app
+  cloud/w9/w9-lab-gitops-final/app
 
 docker build \
-  -f cloud/w9/w9-sang-gitops-final/app/Dockerfile.frontend \
+  -f cloud/w9/w9-lab-gitops-final/app/Dockerfile.frontend \
   -t docker.io/kienlht/flipkart-frontend:latest \
-  cloud/w9/w9-sang-gitops-final/app
+  cloud/w9/w9-lab-gitops-final/app
 ```
 
 ### 2. Nạp image vào Minikube
@@ -99,11 +99,26 @@ kubectl create secret generic flipkart-backend-secrets \
   --from-literal=COOKIE_EXPIRE='5'
 ```
 
-### 5. Push GitOps manifests
+### 5. Seed data cho lab
+
+Script seed nằm tại:
+
+```text
+cloud/w9/w9-lab-gitops-final/app/scripts/seed.js
+```
+
+Tài khoản mẫu sau khi seed:
+
+```text
+admin@flipkart.local / Admin@12345
+customer@flipkart.local / Customer@12345
+```
+
+### 6. Push GitOps manifests
 
 ```bash
-git add cloud/w9/w9-sang-gitops-final/argocd/apps
-git add cloud/w9/w9-sang-gitops-final/flipkart
+git add cloud/w9/w9-lab-gitops-final/argocd/apps
+git add cloud/w9/w9-lab-gitops-final/flipkart
 git commit -m "[W9-Lab] Add Flipkart GitOps application"
 git push origin main
 ```

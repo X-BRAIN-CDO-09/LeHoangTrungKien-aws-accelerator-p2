@@ -1,4 +1,4 @@
-# Evidence - Observability + Canary
+# W9 Final - GitOps, Observability và Canary
 
 Thư mục này lưu bằng chứng hoàn thành lab GitOps, Observability và Progressive Delivery.
 Các ảnh gốc trong `C:\Users\Admin\Pictures\Screenshots` được giữ nguyên; bản sao trong thư mục này đã được đổi tên theo nội dung để thuận tiện khi trình bày.

@@ -45,8 +45,8 @@ Commit và push file Application sau khi cấu hình email được cập nhật
 ```bash
 git add \
   .gitignore \
-  cloud/w9/w9-sang-gitops-final/argocd/apps/kube-prometheus-stack.yaml \
-  cloud/w9/w9-sang-gitops-final/obs-canary/EMAIL-ALERT-SETUP.md
+  cloud/w9/w9-lab-gitops-final/argocd/apps/kube-prometheus-stack.yaml \
+  cloud/w9/w9-lab-gitops-final/obs-canary/EMAIL-ALERT-SETUP.md
 
 git commit -m "[W9-D2] configure Alertmanager email notifications"
 git push

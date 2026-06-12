@@ -5,8 +5,9 @@ on:
     branches:
       - main
     paths:
-      - "cloud/w9/w9-sang-gitops-final/k8s/**"
-      - "cloud/w9/w9-sang-gitops-final/argocd/**"
+      - "cloud/w9/w9-lab-gitops-final/k8s/**"
+      - "cloud/w9/w9-lab-gitops-final/flipkart/k8s/**"
+      - "cloud/w9/w9-lab-gitops-final/argocd/**"
       - ".github/workflows/w9-gitops-validate.yml"
   workflow_dispatch:
 
@@ -35,7 +36,15 @@ jobs:
           kubeconform \
             -strict \
             -summary \
-            cloud/w9/w9-sang-gitops-final/k8s
+            cloud/w9/w9-lab-gitops-final/k8s
+
+      - name: Validate Flipkart Kubernetes manifests
+        run: |
+          kubeconform \
+            -strict \
+            -summary \
+            -ignore-missing-schemas \
+            cloud/w9/w9-lab-gitops-final/flipkart/k8s
 
       - name: Validate ArgoCD Application manifests
         run: |
@@ -43,4 +52,4 @@ jobs:
             -strict \
             -summary \
             -ignore-missing-schemas \
-            cloud/w9/w9-sang-gitops-final/argocd
+            cloud/w9/w9-lab-gitops-final/argocd
