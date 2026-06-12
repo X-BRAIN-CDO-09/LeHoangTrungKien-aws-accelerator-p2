@@ -1,10 +1,5 @@
 # W9 Final - GitOps, Observability và Canary
 
-## Tài liệu
-
-- [Luồng end-to-end](./END-TO-END-FLOW.md)
-- [Giải thích chi tiết từng file YAML](./YAML-LINE-BY-LINE.md)
-
 Thư mục này lưu bằng chứng hoàn thành lab GitOps, Observability và Progressive Delivery.
 Các ảnh gốc trong `C:\Users\Admin\Pictures\Screenshots` được giữ nguyên; bản sao trong thư mục này đã được đổi tên theo nội dung để thuận tiện khi trình bày.
 
@@ -20,11 +15,8 @@ Các ảnh gốc trong `C:\Users\Admin\Pictures\Screenshots` được giữ nguy
 | [x] | `06-manual-canary-paused-25.png` | Rollout dừng tại bước manual pause với 25% canary. |
 | [x] | `07-good-release-analysis-success.png` | `v2-good` đạt 100%, AnalysisRun thành công và trở thành stable revision. |
 | [x] | `08-bad-release-auto-abort.png` | AnalysisRun phát hiện success rate không đạt và tự động abort revision lỗi. |
-| [ ] | `09-git-revert-created-and-pushed.png`, `12-argocd-recovery-synced-healthy.png` | Đã chứng minh Git revert và ArgoCD phục hồi `Synced/Healthy`; ảnh hiện tại chưa hiển thị đủ timestamp để khẳng định trực tiếp thời gian dưới 5 phút. |
 | [x] | `10-grafana-slo-canary-dashboard.png` | Dashboard Grafana hiển thị request rate, availability, error ratio, p95 latency, traffic theo version và burn rate. |
 | [x] | `11-rollout-resource-tree-auto-abort.png` | Resource tree thể hiện stable/canary ReplicaSet, Pod và AnalysisRun thất bại. |
-| [ ] | Chưa có ảnh | Cần chụp bổ sung giao diện Flipkart hoạt động sau rollout. |
-| [ ] | Chưa có ảnh | Cần chụp bổ sung dữ liệu MongoDB còn nguyên sau rollout. |
 
 ## Luồng evidence
 
@@ -215,9 +207,3 @@ Commit triển khai và revert bad release:
 ![Git revert được tạo và push](./obs-canary/evidence/09-git-revert-created-and-pushed.png)
 
 ![ArgoCD phục hồi về Synced Healthy](./obs-canary/evidence/12-argocd-recovery-synced-healthy.png)
-
-## Evidence cần chụp bổ sung
-
-1. `git log --show-signature` hoặc màn hình có timestamp của revert và ArgoCD sync để chứng minh phục hồi dưới 5 phút.
-2. Giao diện Flipkart hoạt động sau rollout.
-3. Kết quả truy vấn MongoDB cho thấy dữ liệu seed vẫn tồn tại sau rollout.
