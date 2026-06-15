@@ -1,0 +1,32 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer
+  namespace: team-a
+rules:
+  - apiGroups: ["", "apps"]
+    resources: ["pods", "services", "configmaps", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: sre
+  namespace: team-a
+rules:
+  - apiGroups: ["", "apps"]
+    resources: ["pods", "pods/log", "events", "services", "configmaps", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: viewer
+  namespace: team-a
+rules:
+  - apiGroups: ["", "apps"]
+    resources: ["pods", "pods/log", "services", "configmaps", "deployments", "replicasets", "events"]
+    verbs: ["get", "list", "watch"]
