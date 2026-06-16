@@ -1,0 +1,21 @@
+name: W10 Trivy Scan
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  trivy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run Trivy filesystem scan
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
