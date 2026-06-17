@@ -9,9 +9,32 @@ crash.*.log
 *.log
 *.Zone.Identifier
 *:*Zone.Identifier
+
+# Node / React
+**/node_modules/
+**/.pnp/
+**/.pnp.js
+**/coverage/
+**/build/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/.env
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+cloud/w9/w9-lab-gitops-final/app/backend/config/config.env
+
 cloud/w8/t2-to-t4-study-notes.txt
 cloud/w8/w8-knowledge-report.txt
-cloud/w8/day-b/t3-k8s-prestudy/troubleshooting-commands.md
 cloud/w8/day-b/t3-k8s-prestudy/troubleshooting-commands.md
 cloud/w9/t2-to-t4-practice-plan.md
 cloud/w9/END-TO-END-LAB-STEPS.md
