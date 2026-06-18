@@ -1,20 +1,17 @@
-# ArgoCD App: Deploy Gatekeeper ConstraintTemplates and Constraints
+# ArgoCD App: Deploy Gatekeeper Constraints after templates create CRDs
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security-gatekeeper-policies
+  name: security-gatekeeper-constraints
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "1"
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   project: default
   source:
     repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
-    path: cloud/w10/temp/security-rbac-admission/gatekeeper
+    path: cloud/w10/temp/security-rbac-admission/gatekeeper/constraints
     targetRevision: main
-    directory:
-      recurse: true
-      exclude: "tests/*"
   destination:
     server: https://kubernetes.default.svc
     namespace: gatekeeper-system
@@ -24,4 +21,4 @@ spec:
       selfHeal: true
     syncOptions:
       - ServerSideApply=true
-
+      - SkipDryRunOnMissingResource=true

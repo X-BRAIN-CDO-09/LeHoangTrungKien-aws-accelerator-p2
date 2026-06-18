@@ -146,7 +146,8 @@ kubectl apply -f app-alert/email-secret.yaml
 - `gatekeeper`: OPA Gatekeeper controller
 - `security-rbac`: RBAC examples for demo namespace and cluster viewer
 - `security-workload-identity`: ServiceAccount for the API Pod
-- `security-gatekeeper-policies`: Admission policies and constraints
+- `security-gatekeeper-templates`: Gatekeeper ConstraintTemplates
+- `security-gatekeeper-constraints`: Gatekeeper Constraints
 
 ## Verify Deployment
 
@@ -234,7 +235,8 @@ ArgoCD applications deploy in order:
 - Wave -1: `app-common` (namespace)
 - Wave 0: `k8s-prometheus`, `k8s-rollout` (infrastructure)
 - Wave 0: `gatekeeper` (admission controller)
-- Wave 1: `app-analysis`, `app-alert`, `security-rbac`, `security-workload-identity`, `security-gatekeeper-policies` (configuration)
+- Wave 1: `app-analysis`, `app-alert`, `security-rbac`, `security-workload-identity`, `security-gatekeeper-templates` (configuration)
+- Wave 2: `security-gatekeeper-constraints`, `app-api` (constraints and application)
 - Wave 2: `app-api` (application)
 
 ## W10 Morning: RBAC + Admission
@@ -251,7 +253,8 @@ Nội dung đã được quản lý bằng ArgoCD:
 argocd/apps/gatekeeper.yaml
 argocd/apps/security-rbac.yaml
 argocd/apps/security-workload-identity.yaml
-argocd/apps/security-gatekeeper-policies.yaml
+argocd/apps/security-gatekeeper-templates.yaml
+argocd/apps/security-gatekeeper-constraints.yaml
 ```
 
 Xem hướng dẫn kiểm tra ở:

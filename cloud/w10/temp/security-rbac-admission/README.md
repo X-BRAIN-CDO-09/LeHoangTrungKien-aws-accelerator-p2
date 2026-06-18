@@ -45,7 +45,8 @@ Các ArgoCD Application nằm ở:
 argocd/apps/gatekeeper.yaml
 argocd/apps/security-rbac.yaml
 argocd/apps/security-workload-identity.yaml
-argocd/apps/security-gatekeeper-policies.yaml
+argocd/apps/security-gatekeeper-templates.yaml
+argocd/apps/security-gatekeeper-constraints.yaml
 ```
 
 Thứ tự sync:
@@ -53,7 +54,8 @@ Thứ tự sync:
 ```text
 app-common
 -> gatekeeper controller
--> rbac + workload identity + gatekeeper policies
+-> rbac + workload identity + gatekeeper templates
+-> gatekeeper constraints
 -> app-api
 ```
 
@@ -107,4 +109,3 @@ kubectl apply -f security-rbac-admission/gatekeeper/tests/test-allow-secure-pod.
 ```
 
 Các file deny phải bị reject. File `56` phải apply được.
-
