@@ -27,7 +27,7 @@ spec:
         runAsUser: 10001
       containers:
       - name: api
-        image: ghcr.io/Vuong-Bach/w10-api:0.0.1
+        image: ghcr.io/x-brain-cdo-09/w10-api:0.0.1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
