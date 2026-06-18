@@ -15,13 +15,21 @@ spec:
         package k8srequiredownerlabel
 
         violation[{"msg": msg}] {
+          input.review.kind.kind == "Pod"
           not input.review.object.metadata.labels.owner
-          msg := "metadata.labels.owner is required"
+          msg := "Pod metadata.labels.owner is required"
         }
 
         violation[{"msg": msg}] {
-          input.review.kind.kind == "Pod"
-          not input.review.object.spec.containers
-          msg := "pod must have containers"
+          workload_kind
+          not input.review.object.spec.template.metadata.labels.owner
+          msg := sprintf("%v spec.template.metadata.labels.owner is required", [input.review.kind.kind])
         }
 
+        workload_kind {
+          input.review.kind.kind == "Deployment"
+        }
+
+        workload_kind {
+          input.review.kind.kind == "Rollout"
+        }

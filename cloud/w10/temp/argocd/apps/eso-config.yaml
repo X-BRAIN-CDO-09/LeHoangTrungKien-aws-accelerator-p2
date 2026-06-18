@@ -1,9 +1,8 @@
-# ArgoCD App: Deploy Gatekeeper Constraints after templates create CRDs
-# Start in warn mode so the platform can be audited before deny is enabled.
+# ArgoCD App: Sync SecretStore, ExternalSecret and demo consumer after ESO CRDs exist.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security-gatekeeper-constraints
+  name: eso-config
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "2"
@@ -11,11 +10,11 @@ spec:
   project: default
   source:
     repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
-    path: cloud/w10/temp/security-rbac-admission/gatekeeper/constraints-warn
+    path: cloud/w10/temp/eso
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
+    namespace: demo
   syncPolicy:
     automated:
       prune: true

@@ -1,0 +1,13 @@
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: require-signed-w10-api
+spec:
+  images:
+    - glob: ghcr.io/x-brain-cdo-09/lehoangtrungkien-aws-accelerator-p2/w10-api*
+  authorities:
+    - key:
+        data: |
+          -----BEGIN PUBLIC KEY-----
+          REPLACE_WITH_COSIGN_PUBLIC_KEY
+          -----END PUBLIC KEY-----

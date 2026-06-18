@@ -34,6 +34,10 @@ w10/
 ├── app-common/           # Common resources
 │   └── demo-namespace.yaml # Namespace demo
 ├── security-rbac-admission/ # RBAC + Gatekeeper lab from W10 morning
+├── eso/                  # ESO SecretStore + ExternalSecret + demo consumer
+├── signing/              # Cosign public key placeholder
+├── policies/             # Sigstore ClusterImagePolicy
+├── runbooks/             # Secret rotation + CVE exception runbooks
 ├── src/                  # Source code
 │   └── api/              # Flask API application
 ├── argocd/
@@ -116,6 +120,19 @@ Khi push thay đổi trong `cloud/w10/temp/src/api/**`, workflow sẽ build imag
 ghcr.io/x-brain-cdo-09/lehoangtrungkien-aws-accelerator-p2/w10-api:<version>
 ```
 
+Workflow chạy theo chuỗi:
+
+```text
+docker build -> Trivy HIGH/CRITICAL scan -> push GHCR -> Cosign sign -> update Rollout tag
+```
+
+Trước khi bật workflow ký image, tạo GitHub Secrets:
+
+```text
+COSIGN_PRIVATE_KEY
+COSIGN_PASSWORD
+```
+
 Sau đó workflow tự cập nhật image tag trong:
 
 ```text
@@ -148,6 +165,10 @@ kubectl apply -f app-alert/email-secret.yaml
 - `security-workload-identity`: ServiceAccount for the API Pod
 - `security-gatekeeper-templates`: Gatekeeper ConstraintTemplates
 - `security-gatekeeper-constraints`: Gatekeeper Constraints
+- `external-secrets`: External Secrets Operator
+- `eso-config`: SecretStore, ExternalSecret and secret consumer
+- `sigstore-policy-controller`: Sigstore admission controller
+- `supply-chain-policies`: ClusterImagePolicy for signed images
 
 ## Verify Deployment
 
@@ -236,8 +257,10 @@ ArgoCD applications deploy in order:
 - Wave 0: `k8s-prometheus`, `k8s-rollout` (infrastructure)
 - Wave 0: `gatekeeper` (admission controller)
 - Wave 1: `app-analysis`, `app-alert`, `security-rbac`, `security-workload-identity`, `security-gatekeeper-templates` (configuration)
-- Wave 2: `security-gatekeeper-constraints`, `app-api` (constraints and application)
-- Wave 2: `app-api` (application)
+- Wave 1: `external-secrets` (ESO operator + CRDs)
+- Wave 2: `security-gatekeeper-constraints`, `eso-config`, `app-api`
+- Wave 3: `sigstore-policy-controller`
+- Wave 4: `supply-chain-policies`
 
 ## W10 Morning: RBAC + Admission
 
@@ -262,6 +285,67 @@ Xem hướng dẫn kiểm tra ở:
 ```text
 security-rbac-admission/README.md
 ```
+
+## W10 Afternoon: Secrets + Supply Chain
+
+Lab buổi chiều nằm ở:
+
+```text
+eso/
+signing/
+policies/
+runbooks/
+```
+
+### ESO
+
+Không commit AWS credentials. Tạo Secret ngoài Git:
+
+```bash
+kubectl create secret generic aws-creds -n demo \
+  --from-literal=access-key="$AWS_ACCESS_KEY_ID" \
+  --from-literal=secret-key="$AWS_SECRET_ACCESS_KEY"
+```
+
+ArgoCD sẽ sync:
+
+```text
+eso/secret-store.yaml
+eso/external-secret.yaml
+eso/secret-consumer.yaml
+```
+
+Xem chi tiết ở:
+
+```text
+eso/README.md
+runbooks/secret-rotation.md
+```
+
+### Trivy + Cosign + Admission Verify
+
+Workflow root `.github/workflows/w10-temp-build-push.yml` scan image bằng Trivy và ký image bằng Cosign sau khi push GHCR.
+
+Tạo key:
+
+```bash
+cosign generate-key-pair
+```
+
+Private key đưa vào GitHub Secrets, public key commit vào:
+
+```text
+signing/cosign.pub
+policies/cluster-image-policy.yaml
+```
+
+Chỉ bật verify cho namespace `demo` sau khi image hiện tại đã được ký:
+
+```bash
+kubectl label namespace demo policy.sigstore.dev/include=true
+```
+
+Nếu label trước khi image được ký, Policy Controller có thể reject chính Rollout `api`.
 
 ## Cleanup
 

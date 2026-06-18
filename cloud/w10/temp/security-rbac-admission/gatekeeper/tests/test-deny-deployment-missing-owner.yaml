@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deny-deployment-missing-owner
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deny-deployment-missing-owner
+  template:
+    metadata:
+      labels:
+        app: deny-deployment-missing-owner
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: app
+          image: docker.io/library/nginx:1.27.0
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false

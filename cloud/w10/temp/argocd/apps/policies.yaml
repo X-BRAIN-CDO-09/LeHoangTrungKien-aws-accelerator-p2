@@ -1,21 +1,20 @@
-# ArgoCD App: Deploy Gatekeeper Constraints after templates create CRDs
-# Start in warn mode so the platform can be audited before deny is enabled.
+# ArgoCD App: Sync image signature policies after Policy Controller is installed.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security-gatekeeper-constraints
+  name: supply-chain-policies
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "4"
 spec:
   project: default
   source:
     repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
-    path: cloud/w10/temp/security-rbac-admission/gatekeeper/constraints-warn
+    path: cloud/w10/temp/policies
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
+    namespace: cosign-system
   syncPolicy:
     automated:
       prune: true

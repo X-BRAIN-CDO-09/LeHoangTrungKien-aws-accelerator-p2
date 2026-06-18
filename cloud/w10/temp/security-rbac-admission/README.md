@@ -14,7 +14,7 @@ Folder này triển khai phần lab từ slide `w10_morning_rbac_admission`: RBA
   - cấm `runAsUser: 0`
   - cấm `hostNetwork: true`
 - Thêm 2 policy mở rộng:
-  - bắt buộc label `owner`
+  - bắt buộc label `owner` cho Pod và Pod template của Deployment/Rollout
   - chỉ cho image từ registry được duyệt
 
 ## Cấu trúc
@@ -33,6 +33,7 @@ security-rbac-admission/
     api-pod-reader-binding.yaml
   gatekeeper/
     templates/
+    constraints-warn/
     constraints/
     tests/
 ```
@@ -58,6 +59,22 @@ app-common
 -> gatekeeper constraints
 -> app-api
 ```
+
+Mặc định ArgoCD sync constraint ở chế độ `warn` từ:
+
+```text
+gatekeeper/constraints-warn
+```
+
+Sau khi audit sạch và chắc chắn workload `api` không vi phạm policy, chuyển Application `security-gatekeeper-constraints` sang bộ enforce:
+
+```bash
+kubectl patch application security-gatekeeper-constraints -n argocd \
+  --type merge \
+  -p '{"spec":{"source":{"path":"cloud/w10/temp/security-rbac-admission/gatekeeper/constraints"}}}'
+```
+
+Bộ `constraints/` dùng cùng tên constraint với `constraints-warn/`, nên ArgoCD sẽ cập nhật `enforcementAction` từ `warn` sang `deny`.
 
 ## Kiểm tra RBAC
 
@@ -88,6 +105,8 @@ carol delete nodes                -> no
 api list pods -n demo             -> yes
 ```
 
+Lưu ý: `alice`, `bob`, `carol` trong lab này là `ServiceAccount`, không phải Kubernetes `User`. Vì vậy lệnh `--as alice` sẽ trả `no`; cần dùng đúng identity dạng `system:serviceaccount:<namespace>:<name>`.
+
 ## Kiểm tra Gatekeeper
 
 Các manifest test nằm trong:
@@ -104,8 +123,11 @@ kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-missing-limi
 kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-root-user.yaml
 kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-host-network.yaml
 kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-missing-owner.yaml
+kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-deployment-missing-owner.yaml
+kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-rollout-missing-owner.yaml
 kubectl apply -f security-rbac-admission/gatekeeper/tests/test-deny-unapproved-registry.yaml
 kubectl apply -f security-rbac-admission/gatekeeper/tests/test-allow-secure-pod.yaml
+kubectl apply -f security-rbac-admission/gatekeeper/tests/test-allow-owner-workloads.yaml
 ```
 
-Các file deny phải bị reject. File `56` phải apply được.
+Ở chế độ `warn`, các file vi phạm sẽ apply được nhưng Gatekeeper ghi cảnh báo/audit. Sau khi chuyển sang bộ `constraints/` dùng `deny`, các file `test-deny-*` phải bị reject; `test-allow-secure-pod.yaml` và `test-allow-owner-workloads.yaml` phải apply được.

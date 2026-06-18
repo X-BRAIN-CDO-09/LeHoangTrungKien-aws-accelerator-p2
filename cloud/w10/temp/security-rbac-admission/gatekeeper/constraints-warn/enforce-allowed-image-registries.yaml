@@ -1,17 +1,17 @@
 apiVersion: constraints.gatekeeper.sh/v1beta1
-kind: K8sRequiredOwnerLabel
+kind: K8sAllowedImageRegistries
 metadata:
-  name: require-owner-label
+  name: allow-approved-registries
   annotations:
     argocd.argoproj.io/sync-wave: "1"
 spec:
-  enforcementAction: deny
+  enforcementAction: warn
   match:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
-      - apiGroups: ["apps"]
-        kinds: ["Deployment"]
-      - apiGroups: ["argoproj.io"]
-        kinds: ["Rollout"]
     namespaces: ["demo"]
+  parameters:
+    registries:
+      - ghcr.io/
+      - docker.io/library/

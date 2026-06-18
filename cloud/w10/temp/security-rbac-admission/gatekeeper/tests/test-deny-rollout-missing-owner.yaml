@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: deny-rollout-missing-owner
+  namespace: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: deny-rollout-missing-owner
+  template:
+    metadata:
+      labels:
+        app: deny-rollout-missing-owner
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: app
+          image: docker.io/library/nginx:1.27.0
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+  strategy:
+    canary:
+      steps:
+        - setWeight: 100
