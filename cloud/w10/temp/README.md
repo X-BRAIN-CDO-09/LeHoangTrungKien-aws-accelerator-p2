@@ -102,6 +102,26 @@ Alertmanager http://localhost:9093
 API          http://localhost:8081
 ```
 
+### 4.2. Build API image
+
+GitHub Actions workflow nằm ở root repo:
+
+```text
+.github/workflows/w10-temp-build-push.yml
+```
+
+Khi push thay đổi trong `cloud/w10/temp/src/api/**`, workflow sẽ build image và push lên GitHub Container Registry:
+
+```text
+ghcr.io/x-brain-cdo-09/w10-api:<version>
+```
+
+Sau đó workflow tự cập nhật image tag trong:
+
+```text
+cloud/w10/temp/app-api/rollout.yaml
+```
+
 ### 5. Setup Email Alert (Optional)
 ```bash
 # Follow instructions in app-alert/README.md

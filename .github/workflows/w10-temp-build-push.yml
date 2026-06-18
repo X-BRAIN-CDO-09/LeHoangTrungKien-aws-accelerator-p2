@@ -1,13 +1,14 @@
-# Build and push Docker image to GitHub Container Registry
-name: Build and Push Image
+# Build and push W10 temp API image to GitHub Container Registry.
+name: W10 Temp Build and Push Image
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'cloud/w10/temp/src/api/**'
-      - 'cloud/w10/temp/.github/workflows/build-push.yml'
+      - "cloud/w10/temp/src/api/**"
+      - "cloud/w10/temp/app-api/rollout.yaml"
+      - ".github/workflows/w10-temp-build-push.yml"
   workflow_dispatch:
 
 env:
@@ -44,13 +45,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
             type=raw,value=${{ steps.semver.outputs.version }}
             type=sha,prefix=v${{ steps.semver.outputs.version }}-
 
@@ -75,11 +75,16 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: bump version to v${{ steps.semver.outputs.version }}"
+            git commit -m "chore(w10): bump temp api image to v${{ steps.semver.outputs.version }}"
             git push
           fi
 
       - name: Create git tag
         run: |
-          git tag v${{ steps.semver.outputs.version }}
-          git push origin v${{ steps.semver.outputs.version }}
+          if git rev-parse "v${{ steps.semver.outputs.version }}" >/dev/null 2>&1; then
+            echo "Tag already exists"
+          else
+            git tag v${{ steps.semver.outputs.version }}
+            git push origin v${{ steps.semver.outputs.version }}
+          fi
+

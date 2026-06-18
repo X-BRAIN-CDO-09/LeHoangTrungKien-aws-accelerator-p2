@@ -1,0 +1,31 @@
+name: W10 Temp Validate Manifests
+
+on:
+  pull_request:
+    paths:
+      - "cloud/w10/temp/**"
+      - ".github/workflows/w10-temp-validate.yml"
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSLo kc.tgz https://github.com/yannh/kubeconform/releases/download/v0.6.7/kubeconform-linux-amd64.tar.gz
+          tar -xzf kc.tgz
+          sudo mv kubeconform /usr/local/bin/
+
+      - name: Validate manifests
+        run: |
+          kubeconform -strict -summary -ignore-missing-schemas \
+            cloud/w10/temp/app-api \
+            cloud/w10/temp/app-analysis \
+            cloud/w10/temp/app-alert \
+            cloud/w10/temp/app-common \
+            cloud/w10/temp/argocd \
+            cloud/w10/temp/security-rbac-admission
+
