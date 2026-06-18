@@ -1,5 +1,4 @@
 # ArgoCD App: Sync image signature policies after Policy Controller is installed.
-# A PreSync hook in policies/ waits for the conversion webhook endpoint first.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
