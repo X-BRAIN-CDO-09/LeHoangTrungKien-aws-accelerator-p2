@@ -28,11 +28,40 @@ demo/db-secret
 
 `refreshInterval: 30s` để đạt yêu cầu rotate dưới 60 giây.
 
+## GHCR pull secret
+
+Vì image `w10-api` nằm trong GHCR private package, namespace `demo` cần Docker registry secret. Tạo AWS Secrets Manager secret dạng JSON:
+
+```bash
+aws secretsmanager create-secret \
+  --name demo/ghcr/pull-secret \
+  --secret-string '{"username":"<github-username>","password":"<github-token-read-packages>"}' \
+  --region ap-southeast-1
+```
+
+Nếu secret đã tồn tại:
+
+```bash
+aws secretsmanager put-secret-value \
+  --secret-id demo/ghcr/pull-secret \
+  --secret-string '{"username":"<github-username>","password":"<github-token-read-packages>"}' \
+  --region ap-southeast-1
+```
+
+`ghcr-pull-secret.yaml` sẽ sync secret này thành Kubernetes Secret:
+
+```text
+demo/ghcr-pull-secret
+```
+
+ServiceAccount `api` dùng secret đó qua `imagePullSecrets`, nên Pod có thể pull image private từ GHCR.
+
 ## Nghiệm thu
 
 ```bash
 kubectl get externalsecret -n demo
 kubectl get secret db-secret -n demo -o jsonpath='{.data.password}' | base64 -d
+kubectl get secret ghcr-pull-secret -n demo
 kubectl get pod -n demo -l app=secret-consumer
 kubectl logs -n demo deploy/secret-consumer --tail=20
 ```

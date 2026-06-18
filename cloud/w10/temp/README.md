@@ -312,6 +312,7 @@ ArgoCD sẽ sync:
 ```text
 eso/secret-store.yaml
 eso/external-secret.yaml
+eso/ghcr-pull-secret.yaml
 eso/secret-consumer.yaml
 ```
 
