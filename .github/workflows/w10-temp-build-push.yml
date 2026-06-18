@@ -11,6 +11,10 @@ on:
       - ".github/workflows/w10-temp-build-push.yml"
   workflow_dispatch:
 
+concurrency:
+  group: w10-temp-build-push-main
+  cancel-in-progress: false
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: x-brain-cdo-09/lehoangtrungkien-aws-accelerator-p2/w10-api
@@ -109,11 +113,13 @@ jobs:
             echo "No changes to commit"
           else
             git commit -m "chore(w10): bump temp api image to v${{ steps.semver.outputs.version }}"
-            git push
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
 
       - name: Create git tag
         run: |
+          git fetch --tags origin
           if git rev-parse "v${{ steps.semver.outputs.version }}" >/dev/null 2>&1; then
             echo "Tag already exists"
           else
