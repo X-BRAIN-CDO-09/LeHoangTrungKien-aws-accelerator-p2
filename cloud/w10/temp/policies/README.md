@@ -31,6 +31,15 @@ COSIGN_PASSWORD
 kubectl label namespace demo policy.sigstore.dev/include=true
 ```
 
+5. Application `supply-chain-policies` có PreSync hook `wait-for-policy-webhook` để chờ webhook của Policy Controller sẵn sàng trước khi apply `ClusterImagePolicy`:
+
+```bash
+kubectl -n cosign-system get endpoints webhook
+kubectl -n cosign-system get job wait-for-policy-webhook
+```
+
+Vì vậy app này có thể auto-sync. Nếu hook timeout, kiểm tra pod/service trong namespace `cosign-system`.
+
 ## Nghiệm thu
 
 ```bash
