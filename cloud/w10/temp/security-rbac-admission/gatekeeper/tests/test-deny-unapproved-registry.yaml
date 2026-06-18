@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: deny-unapproved-registry
+  namespace: demo
+  labels:
+    owner: platform-team
+spec:
+  containers:
+    - name: app
+      image: quay.io/prometheus/busybox:1.0
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi

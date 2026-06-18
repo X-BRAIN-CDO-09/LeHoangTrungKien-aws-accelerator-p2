@@ -1,0 +1,56 @@
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowLatestTag
+metadata:
+  name: disallow-latest-tag
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces: ["demo"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLimits
+metadata:
+  name: require-container-limits
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces: ["demo"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowRootUser
+metadata:
+  name: disallow-run-as-root
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces: ["demo"]
+---
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sDisallowHostNetwork
+metadata:
+  name: disallow-host-network
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  enforcementAction: deny
+  match:
+    kinds:
+      - apiGroups: [""]
+        kinds: ["Pod"]
+    namespaces: ["demo"]
+

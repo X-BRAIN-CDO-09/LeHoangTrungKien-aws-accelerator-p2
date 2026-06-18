@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: allow-secure-pod
+  namespace: demo
+  labels:
+    owner: platform-team
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 10001
+  containers:
+    - name: app
+      image: docker.io/library/nginx:1.27.0
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+      securityContext:
+        allowPrivilegeEscalation: false
+
