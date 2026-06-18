@@ -113,7 +113,7 @@ GitHub Actions workflow nằm ở root repo:
 Khi push thay đổi trong `cloud/w10/temp/src/api/**`, workflow sẽ build image và push lên GitHub Container Registry:
 
 ```text
-ghcr.io/x-brain-cdo-09/w10-api:<version>
+ghcr.io/x-brain-cdo-09/kienlht-w10-api:<version>
 ```
 
 Sau đó workflow tự cập nhật image tag trong:

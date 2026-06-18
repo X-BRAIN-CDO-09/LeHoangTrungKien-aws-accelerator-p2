@@ -13,7 +13,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: x-brain-cdo-09/w10-api
+  IMAGE_NAME: x-brain-cdo-09/kienlht-w10-api
 
 jobs:
   build-and-push:
@@ -64,7 +64,7 @@ jobs:
 
       - name: Update rollout.yaml with new version
         run: |
-          sed -i "s|image: ghcr.io/.*/w10-api:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}|g" cloud/w10/temp/app-api/rollout.yaml
+          sed -i "s|image: ghcr.io/.*/.*w10-api:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.semver.outputs.version }}|g" cloud/w10/temp/app-api/rollout.yaml
           sed -i "s|value: \"v.*\"|value: \"v${{ steps.semver.outputs.version }}\"|g" cloud/w10/temp/app-api/rollout.yaml
 
       - name: Commit and push version update
@@ -87,4 +87,3 @@ jobs:
             git tag v${{ steps.semver.outputs.version }}
             git push origin v${{ steps.semver.outputs.version }}
           fi
-
