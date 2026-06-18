@@ -54,13 +54,17 @@ spec:
       restartPolicy: Never
       containers:
         - name: wait
-          image: bitnami/kubectl:1.35
+          image: curlimages/curl:8.11.1
           command:
             - sh
             - -c
             - |
+              TOKEN="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)"
+              CACERT="/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+              API="https://kubernetes.default.svc/api/v1/namespaces/cosign-system/endpoints/webhook"
+
               for i in $(seq 1 60); do
-                if kubectl -n cosign-system get endpoints webhook -o jsonpath='{.subsets[0].addresses[0].ip}' 2>/dev/null | grep -q .; then
+                if curl -fsS --cacert "$CACERT" -H "Authorization: Bearer $TOKEN" "$API" | grep -q '"addresses"'; then
                   echo "policy-controller webhook endpoint is ready"
                   exit 0
                 fi
