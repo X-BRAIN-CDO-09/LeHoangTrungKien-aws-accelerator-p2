@@ -9,5 +9,6 @@ spec:
     - key:
         data: |
           -----BEGIN PUBLIC KEY-----
-          REPLACE_WITH_COSIGN_PUBLIC_KEY
+          MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAERxn4JIE8ERLFNpsAoRZxqVyv/2sR
+          QKTRgcOVoHJvNnqT1cAs75Ch4Xy1E6KglHdsgTh7hpguPbvA2XbRmDC6RQ==
           -----END PUBLIC KEY-----

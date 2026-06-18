@@ -10,6 +10,12 @@ crash.*.log
 *.Zone.Identifier
 *:*Zone.Identifier
 
+# Cosign local key material
+cosign.key
+/cosign.pub
+**/cosign.key
+**/cosign.password
+
 # Node / React
 **/node_modules/
 **/.pnp/
