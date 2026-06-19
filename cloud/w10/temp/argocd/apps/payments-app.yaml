@@ -22,3 +22,10 @@ spec:
     syncOptions:
       - ServerSideApply=true
       - SkipDryRunOnMissingResource=true
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: payments-api
+      namespace: payments
+      jqPathExpressions:
+        - .spec.template.spec.containers[] | select(.name == "api").image
