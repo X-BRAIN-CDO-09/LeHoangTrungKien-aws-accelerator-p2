@@ -26,7 +26,10 @@ jobs:
             cloud/w10/temp/app-analysis \
             cloud/w10/temp/app-alert \
             cloud/w10/temp/app-common \
+            cloud/w10/temp/apps/payments \
             cloud/w10/temp/argocd \
             cloud/w10/temp/eso \
+            cloud/w10/temp/evidence/payments \
             cloud/w10/temp/policies \
-            cloud/w10/temp/security-rbac-admission
+            cloud/w10/temp/security-rbac-admission \
+            cloud/w10/temp/tenants/payments

@@ -56,6 +56,8 @@ demo/ghcr-pull-secret
 
 ServiceAccount `api` dùng secret đó qua `imagePullSecrets`, nên Pod có thể pull image private từ GHCR.
 
+`ClusterSecretStore` trong `cluster-secret-store.yaml` dùng cùng AWS credential ở namespace `demo` để các tenant khác, ví dụ `payments`, có thể sync secret GHCR riêng trong namespace của họ mà không commit token.
+
 ## Nghiệm thu
 
 ```bash

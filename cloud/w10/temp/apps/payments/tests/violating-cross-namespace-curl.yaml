@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: payments-curl-demo-api
+  namespace: payments
+  labels:
+    app: payments-curl-demo-api
+    owner: payments-team
+    tenant: payments
+spec:
+  restartPolicy: Never
+  containers:
+    - name: curl
+      image: docker.io/library/busybox:1.36.1
+      command:
+        - sh
+        - -c
+        - wget -qO- --timeout=5 http://api.demo.svc.cluster.local || true
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi

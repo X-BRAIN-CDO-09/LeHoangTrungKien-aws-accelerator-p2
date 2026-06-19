@@ -38,6 +38,9 @@ w10/
 ├── signing/              # Cosign public key placeholder
 ├── policies/             # Sigstore ClusterImagePolicy
 ├── runbooks/             # Secret rotation + CVE exception runbooks
+├── tenants/payments/     # Take-home tenant platform resources
+├── apps/payments/        # Take-home team B workload
+├── evidence/payments/    # Take-home evidence commands and test manifests
 ├── src/                  # Source code
 │   └── api/              # Flask API application
 ├── argocd/
@@ -169,6 +172,8 @@ kubectl apply -f app-alert/email-secret.yaml
 - `eso-config`: SecretStore, ExternalSecret and secret consumer
 - `sigstore-policy-controller`: Sigstore admission controller
 - `supply-chain-policies`: ClusterImagePolicy for signed images
+- `payments`: namespace, RBAC, quota, LimitRange and NetworkPolicy for team B
+- `payments-app`: workload for team B
 
 ## Verify Deployment
 
@@ -261,6 +266,8 @@ ArgoCD applications deploy in order:
 - Wave 2: `security-gatekeeper-constraints`, `eso-config`, `app-api`
 - Wave 3: `sigstore-policy-controller`
 - Wave 4: `supply-chain-policies`
+- Wave 5: `payments`
+- Wave 6: `payments-app`
 
 ## W10 Morning: RBAC + Admission
 
@@ -347,6 +354,55 @@ kubectl label namespace demo policy.sigstore.dev/include=true
 ```
 
 Nếu label trước khi image được ký, Policy Controller có thể reject chính Rollout `api`.
+
+## Take-Home: Payments Tenant
+
+Bài tập lớn nằm ở:
+
+```text
+tenants/payments/
+apps/payments/
+evidence/payments/
+```
+
+Checklist evidence tổng cho lab sáng, lab chiều và challenge nằm ở:
+
+```text
+evidence/README.md
+```
+
+Guide giải thích toàn bộ YAML manifest và luồng chạy nằm ở:
+
+```text
+YAML-MANIFEST-GUIDE.md
+```
+
+ArgoCD apps:
+
+```text
+argocd/apps/payments.yaml
+argocd/apps/payments-app.yaml
+```
+
+Nội dung:
+
+- Namespace `payments` có label `policy.sigstore.dev/include=true`.
+- RBAC `payments-dev` chỉ quản lý workload trong namespace `payments`.
+- `ResourceQuota` + `LimitRange`.
+- NetworkPolicy default-deny ingress và egress chỉ cho cùng namespace + DNS.
+- App `payments-api` dùng image đã ký `w10-api:0.0.4` và pull bằng ESO-managed `ghcr-pull-secret`.
+
+Trước khi sync, đảm bảo AWS Secrets Manager có secret:
+
+```text
+demo/ghcr/pull-secret
+```
+
+với JSON:
+
+```json
+{"username":"lken1514","password":"GITHUB_TOKEN_READ_PACKAGES"}
+```
 
 ## Cleanup
 

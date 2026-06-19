@@ -1,25 +1,25 @@
-# ArgoCD App: Deploy Gatekeeper Constraints after templates create CRDs.
-# The take-home lab uses enforce mode so violating manifests are rejected.
+# ArgoCD App: tenant platform resources for payments.
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: security-gatekeeper-constraints
+  name: payments
   namespace: argocd
   annotations:
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "5"
 spec:
   project: default
   source:
     repoURL: https://github.com/X-BRAIN-CDO-09/LeHoangTrungKien-aws-accelerator-p2.git
-    path: cloud/w10/temp/security-rbac-admission/gatekeeper/constraints
+    path: cloud/w10/temp/tenants/payments
     targetRevision: main
   destination:
     server: https://kubernetes.default.svc
-    namespace: gatekeeper-system
+    namespace: payments
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
+      - CreateNamespace=true
       - ServerSideApply=true
       - SkipDryRunOnMissingResource=true

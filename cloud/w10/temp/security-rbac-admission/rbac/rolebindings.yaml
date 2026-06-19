@@ -4,11 +4,10 @@ metadata:
   name: alice-demo-deployer
   namespace: demo
 subjects:
-  - kind: ServiceAccount
+  - kind: User
     name: alice
-    namespace: demo
+    apiGroup: rbac.authorization.k8s.io
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
   name: demo-deployer
-

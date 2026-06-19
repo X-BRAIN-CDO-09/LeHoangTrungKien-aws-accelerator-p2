@@ -14,4 +14,4 @@ spec:
         kinds: ["Deployment"]
       - apiGroups: ["argoproj.io"]
         kinds: ["Rollout"]
-    namespaces: ["demo"]
+    namespaces: ["demo", "payments"]

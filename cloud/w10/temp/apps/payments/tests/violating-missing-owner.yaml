@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payments-missing-owner
+  namespace: payments
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: payments-missing-owner
+  template:
+    metadata:
+      labels:
+        app: payments-missing-owner
+    spec:
+      containers:
+        - name: app
+          image: docker.io/library/nginx:1.27.0
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi

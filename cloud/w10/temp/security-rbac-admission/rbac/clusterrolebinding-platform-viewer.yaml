@@ -3,11 +3,10 @@ kind: ClusterRoleBinding
 metadata:
   name: bob-platform-pod-viewer
 subjects:
-  - kind: ServiceAccount
+  - kind: User
     name: bob
-    namespace: demo
+    apiGroup: rbac.authorization.k8s.io
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: platform-pod-viewer
-

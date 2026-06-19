@@ -22,7 +22,6 @@ Folder này triển khai phần lab từ slide `w10_morning_rbac_admission`: RBA
 ```text
 security-rbac-admission/
   rbac/
-    serviceaccounts.yaml
     roles.yaml
     rolebindings.yaml
     clusterrole-platform-viewer.yaml
@@ -80,16 +79,16 @@ Bộ `constraints/` dùng cùng tên constraint với `constraints-warn/`, nên 
 
 ```bash
 kubectl auth can-i create deploy -n demo \
-  --as system:serviceaccount:demo:alice
+  --as alice
 
 kubectl auth can-i create deploy -n kube-system \
-  --as system:serviceaccount:demo:alice
+  --as alice
 
 kubectl auth can-i get pods -A \
-  --as system:serviceaccount:demo:bob
+  --as bob
 
 kubectl auth can-i delete nodes \
-  --as system:serviceaccount:demo:carol
+  --as carol
 
 kubectl auth can-i list pods -n demo \
   --as system:serviceaccount:demo:api
@@ -105,7 +104,7 @@ carol delete nodes                -> no
 api list pods -n demo             -> yes
 ```
 
-Lưu ý: `alice`, `bob`, `carol` trong lab này là `ServiceAccount`, không phải Kubernetes `User`. Vì vậy lệnh `--as alice` sẽ trả `no`; cần dùng đúng identity dạng `system:serviceaccount:<namespace>:<name>`.
+Lưu ý: `alice`, `bob`, `carol` trong lab này là Kubernetes `User` được giả lập bằng impersonation. Vì vậy lệnh nghiệm thu dùng đúng dạng `--as alice`, `--as bob`, `--as carol`. GitOps không tạo object User; repo chỉ tạo Role/ClusterRole và binding tới tên user đó.
 
 ## Kiểm tra Gatekeeper
 

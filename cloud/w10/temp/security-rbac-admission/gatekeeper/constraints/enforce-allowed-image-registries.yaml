@@ -10,9 +10,8 @@ spec:
     kinds:
       - apiGroups: [""]
         kinds: ["Pod"]
-    namespaces: ["demo"]
+    namespaces: ["demo", "payments"]
   parameters:
     registries:
       - ghcr.io/
       - docker.io/library/
-
