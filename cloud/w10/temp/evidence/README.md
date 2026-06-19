@@ -8,6 +8,30 @@ File này gom evidence cho 3 phần của W10:
 
 Mỗi mục nên có ảnh ArgoCD hoặc output terminal tương ứng. Nếu nộp bằng Markdown, paste output vào dưới từng mục.
 
+## Kết quả chính
+
+| Trạng thái | Evidence | Nội dung chứng minh |
+| --- | --- | --- |
+| [x] | `screenshots/04-argocd-applications-overview.png` | Tổng quan ArgoCD Applications. |
+| [x] | `screenshots/05-rbac-users-can-i.png` | RBAC Lab 1.1: `alice`, `bob`, `carol` đúng quyền. |
+| [x] | `screenshots/06-gatekeeper-core-deny-rejections.png` | Gatekeeper Lab 1.2 reject image `latest`, thiếu limits, root user, hostNetwork. |
+| [x] | `screenshots/07-gatekeeper-allow-secure-pod-running.png` | Manifest hợp lệ pass admission. |
+| [x] | `screenshots/08-gatekeeper-owner-label-rejections.png` | Custom owner label policy reject workload thiếu `owner`. |
+| [x] | `screenshots/09-gatekeeper-owner-workloads-pass.png` | Workload hợp lệ có `owner` pass. |
+| [x] | `screenshots/01-eso-secret-initial-and-consumer-log.png` | ESO sync `db-secret` và app đọc được secret ban đầu. |
+| [x] | `screenshots/02-eso-secret-rotation-log.png` | Secret rotate thành công, pod không cần restart. |
+| [x] | `screenshots/10-ghcr-pull-secret-api-running.png` | ESO tạo `ghcr-pull-secret`, API pull private image và Running. |
+| [x] | `screenshots/03-cosign-verify-w10-api.png` | `cosign verify` pass cho image `w10-api:0.0.4`. |
+| [x] | `screenshots/11-sigstore-controller-and-policy-start.png` | Sigstore Policy Controller webhook và policy bắt đầu hoạt động. |
+| [x] | `screenshots/12-sigstore-policy-ready-and-namespace-labels.png` | `ClusterImagePolicy` Ready và namespace bật label enforce. |
+| [x] | `screenshots/13-payments-rbac-isolation.png` | `payments-dev` bị cô lập đúng trong namespace `payments`. |
+| [x] | `screenshots/15-payments-quota-resourcequota-reject.png` | ResourceQuota chặn workload vượt ngân sách. |
+| [x] | `screenshots/16-payments-limitrange-default-resources.png` | LimitRange tự cấp default resources. |
+| [ ] | Chưa có ảnh | NetworkPolicy runtime chặn gọi chéo, cần cluster có CNI enforce như Calico/Cilium. |
+| [x] | `screenshots/17-payments-app-running-and-owner-policy-reject.png` | App `payments-api` chạy và constraint cũ reject manifest vi phạm. |
+| [x] | `screenshots/18-secret-scan-no-real-patterns.png` | Không có AWS key, GitHub PAT, private key thật trong repo. |
+| [~] | `screenshots/14-payments-quota-superseded-limitrange-block.png` | Ảnh trace lúc test quota bị LimitRange chặn trước, không dùng làm evidence cuối. |
+
 ## 0. Trạng thái GitOps chung
 
 ```bash
@@ -22,12 +46,11 @@ root, app-api, security-rbac, gatekeeper, eso, policy-controller, supply-chain-p
 Namespace demo và payments tồn tại.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Ảnh ArgoCD Applications]
-[Output kubectl get applications -n argocd]
-```
+![ArgoCD applications overview](./screenshots/04-argocd-applications-overview.png)
+
+_ArgoCD quản lý các Application chính của W10._
 
 ## 1. Lab sáng - RBAC
 
@@ -58,11 +81,11 @@ carol delete nodes                 -> no
 api list pods -n demo              -> yes
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Output 5 lệnh can-i]
-```
+![RBAC can-i users](./screenshots/05-rbac-users-can-i.png)
+
+_Kết quả `kubectl auth can-i` cho `alice`, `bob`, `carol` đúng với ma trận RBAC._
 
 ## 2. Lab sáng - Gatekeeper Admission
 
@@ -101,12 +124,23 @@ test-allow-* apply được.
 Rollout api hiện tại không bị chính policy chặn.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Ảnh/output reject từ Gatekeeper]
-[Ảnh/output manifest hợp lệ pass]
-```
+![Gatekeeper core deny rejections](./screenshots/06-gatekeeper-core-deny-rejections.png)
+
+_Gatekeeper reject các manifest vi phạm policy lõi: `latest`, thiếu limits, root user, hostNetwork._
+
+![Gatekeeper allow secure pod running](./screenshots/07-gatekeeper-allow-secure-pod-running.png)
+
+_Manifest hợp lệ pass admission và pod `allow-secure-pod` chạy được._
+
+![Gatekeeper owner label rejections](./screenshots/08-gatekeeper-owner-label-rejections.png)
+
+_Custom owner policy reject Pod, Deployment, Rollout thiếu label `owner`._
+
+![Gatekeeper owner workloads pass](./screenshots/09-gatekeeper-owner-workloads-pass.png)
+
+_Workload có label `owner` hợp lệ được tạo thành công._
 
 ## 3. Lab chiều - External Secrets Operator
 
@@ -145,12 +179,19 @@ db-secret tồn tại và secret-consumer đọc được password.
 ghcr-pull-secret tồn tại để pull private image từ GHCR.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Output SecretStore/ExternalSecret Ready]
-[Output db-secret và log secret-consumer]
-```
+![ESO secret initial and consumer log](./screenshots/01-eso-secret-initial-and-consumer-log.png)
+
+_ESO sync secret từ AWS Secrets Manager thành `db-secret`, app đọc được giá trị ban đầu._
+
+![ESO secret rotation log](./screenshots/02-eso-secret-rotation-log.png)
+
+_Sau khi rotate secret trên AWS, Kubernetes Secret đổi theo và pod không cần restart._
+
+![GHCR pull secret and API running](./screenshots/10-ghcr-pull-secret-api-running.png)
+
+_ESO tạo `ghcr-pull-secret`; ServiceAccount `api` dùng secret này để pull private image._
 
 ## 4. Lab chiều - Trivy, Cosign, Sigstore
 
@@ -188,13 +229,19 @@ Namespace demo/payments có label policy.sigstore.dev/include=true.
 Pod api chạy image signed và Running.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Ảnh GitHub Actions xanh: build, Trivy, sign]
-[Output cosign verify]
-[Output ClusterImagePolicy Ready]
-```
+![Cosign verify W10 API](./screenshots/03-cosign-verify-w10-api.png)
+
+_`cosign verify` xác nhận image `w10-api:0.0.4` đã được ký đúng public key._
+
+![Sigstore controller and policy start](./screenshots/11-sigstore-controller-and-policy-start.png)
+
+_Sigstore Policy Controller webhook chạy và sẵn sàng nhận admission request._
+
+![Sigstore policy ready and namespace labels](./screenshots/12-sigstore-policy-ready-and-namespace-labels.png)
+
+_ClusterImagePolicy Ready và namespace được label để bật kiểm tra chữ ký image._
 
 ## 5. Challenge - Payments Tenant RBAC
 
@@ -221,11 +268,11 @@ get secrets -n payments         -> no
 update rolebindings -n payments -> no
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Output can-i của payments-dev]
-```
+![Payments RBAC isolation](./screenshots/13-payments-rbac-isolation.png)
+
+_`payments-dev` chỉ có quyền thao tác workload trong namespace `payments`, không leo quyền qua secrets hoặc rolebindings._
 
 ## 6. Challenge - Quota và LimitRange
 
@@ -243,12 +290,15 @@ quota-violation bị reject vì vượt ResourceQuota.
 limitrange-default-demo được tạo và container được default resources.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Output quota reject]
-[Output pod đã được LimitRange default resources]
-```
+![Payments quota ResourceQuota reject](./screenshots/15-payments-quota-resourcequota-reject.png)
+
+_ResourceQuota `payments-budget` reject pod vượt ngân sách tài nguyên của tenant._
+
+![Payments LimitRange default resources](./screenshots/16-payments-limitrange-default-resources.png)
+
+_LimitRange `payments-defaults` tự thêm requests/limits cho pod không khai báo resources._
 
 Cleanup sau khi lấy evidence:
 
@@ -271,11 +321,10 @@ Pod payments-curl-demo-api không gọi được service ở namespace demo.
 NetworkPolicy cần CNI có enforce policy, ví dụ Calico.
 ```
 
-Evidence cần lưu:
+Evidence:
 
 ```text
-[Output NetworkPolicy]
-[Output curl/wget timeout hoặc failed]
+[Còn thiếu ảnh NetworkPolicy runtime chặn gọi chéo]
 ```
 
 Cleanup sau khi lấy evidence:
@@ -308,15 +357,33 @@ Manifest thiếu owner bị Gatekeeper reject.
 Điểm quan trọng: constraint cũ đã áp cho namespace payments, không chỉ demo.
 ```
 
-Evidence cần lưu:
+Evidence:
 
-```text
-[Ảnh ArgoCD payments/payments-app Synced Healthy]
-[Output payments-api Running]
-[Output missing-owner bị reject]
+![Payments app running and owner policy reject](./screenshots/17-payments-app-running-and-owner-policy-reject.png)
+
+_App `payments-api` chạy hợp lệ, còn manifest thiếu `owner` bị constraint cũ chặn trong namespace `payments`._
+
+## 9. Secret hygiene
+
+```bash
+git status --short
+git grep -n -I -E 'AKIA|ASIA|github_pat_|ghp_|BEGIN .*PRIVATE KEY|AWS_SECRET_ACCESS_KEY' -- . ':!cloud/w10/temp/evidence/screenshots'
 ```
 
-## 9. Hai câu giải thích để nộp
+Kỳ vọng:
+
+```text
+Không có AWS access key, GitHub PAT, cosign private key hoặc secret thật bị commit.
+Nếu có dòng chứa AWS_SECRET_ACCESS_KEY thì chỉ được là placeholder trong tài liệu hướng dẫn, không phải giá trị thật.
+```
+
+Evidence:
+
+![Secret scan no real patterns](./screenshots/18-secret-scan-no-real-patterns.png)
+
+_Repo không chứa AWS key, GitHub PAT hoặc private key thật; các dòng còn lại chỉ là placeholder trong tài liệu._
+
+## 10. Hai câu giải thích để nộp
 
 ```text
 Payments được tách thành namespace riêng, RBAC chỉ cấp Role/RoleBinding trong namespace payments nên payments-dev không thể thao tác sang demo hoặc leo quyền bằng secrets/rolebindings. Guardrail cũ vẫn áp cho team mới vì Gatekeeper constraints đã mở rộng match namespace từ demo sang payments, còn Sigstore Policy Controller enforce theo label policy.sigstore.dev/include=true trên namespace payments.

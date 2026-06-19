@@ -1,0 +1,11 @@
+Training-only sample data for Amazon Macie.
+
+Do not use real customer data in this repo.
+
+Fake card numbers commonly used for testing:
+- Visa test card: 4111 1111 1111 1111
+- Mastercard test card: 5555 5555 5555 4444
+
+Fake identity-like values:
+- Demo email: security.lab@example.com
+- Demo phone: +84 901 234 567

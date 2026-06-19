@@ -1,0 +1,10 @@
+aws_region         = "ap-southeast-1"
+project_name       = "w10-macie-s3-alert"
+student_id         = "XB-DN26-045"
+
+# Option 1: leave this commented so Terraform prompts you during plan/apply.
+# Option 2: uncomment and replace with your real email.
+# notification_email = "your-email@example.com"
+
+# Leave empty to use your AWS account ID in the bucket name.
+bucket_name_suffix = ""
