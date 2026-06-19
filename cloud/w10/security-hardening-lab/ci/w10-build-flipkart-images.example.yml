@@ -1,0 +1,78 @@
+name: W10 Build Flipkart Images
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "cloud/w9/w9-lab-gitops-final/app/**"
+      - "cloud/w10/security-hardening-lab/ci/w10-build-flipkart-images.example.yml"
+
+env:
+  REGISTRY: docker.io
+  IMAGE_NAMESPACE: kienlht
+
+jobs:
+  build-scan-sign:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set image tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> "$GITHUB_ENV"
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build backend image
+        run: |
+          docker build \
+            -f cloud/w9/w9-lab-gitops-final/app/Dockerfile.backend \
+            -t "$REGISTRY/$IMAGE_NAMESPACE/flipkart-backend:$IMAGE_TAG" \
+            cloud/w9/w9-lab-gitops-final/app
+
+      - name: Build frontend image
+        run: |
+          docker build \
+            -f cloud/w9/w9-lab-gitops-final/app/Dockerfile.frontend \
+            -t "$REGISTRY/$IMAGE_NAMESPACE/flipkart-frontend:$IMAGE_TAG" \
+            cloud/w9/w9-lab-gitops-final/app
+
+      - name: Scan backend image with Trivy
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/flipkart-backend:${{ env.IMAGE_TAG }}
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
+
+      - name: Scan frontend image with Trivy
+        uses: aquasecurity/trivy-action@0.24.0
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAMESPACE }}/flipkart-frontend:${{ env.IMAGE_TAG }}
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          ignore-unfixed: true
+
+      - name: Push images
+        run: |
+          docker push "$REGISTRY/$IMAGE_NAMESPACE/flipkart-backend:$IMAGE_TAG"
+          docker push "$REGISTRY/$IMAGE_NAMESPACE/flipkart-frontend:$IMAGE_TAG"
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3.7.0
+
+      - name: Sign images with keyless Cosign
+        run: |
+          cosign sign --yes "$REGISTRY/$IMAGE_NAMESPACE/flipkart-backend:$IMAGE_TAG"
+          cosign sign --yes "$REGISTRY/$IMAGE_NAMESPACE/flipkart-frontend:$IMAGE_TAG"

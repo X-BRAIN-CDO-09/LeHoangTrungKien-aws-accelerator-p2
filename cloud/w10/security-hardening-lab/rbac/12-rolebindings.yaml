@@ -1,0 +1,41 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer
+  namespace: flipkart
+subjects:
+  - kind: ServiceAccount
+    name: developer
+    namespace: flipkart
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: developer
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: sre
+  namespace: flipkart
+subjects:
+  - kind: ServiceAccount
+    name: sre
+    namespace: flipkart
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: sre
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: viewer
+  namespace: flipkart
+subjects:
+  - kind: ServiceAccount
+    name: viewer
+    namespace: flipkart
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: viewer

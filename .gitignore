@@ -49,3 +49,5 @@ cloud/w9/w9-lab-gitops-final/END-TO-END-FLOW.md
 cloud/w9/w9-lab-gitops-final/YAML-LINE-BY-LINE.md
 cloud/w9/w9-sang-gitops-final/app/package-lock.json
 cloud/w9/w9-sang-gitops-final/flipkart/k8s/backend/alertmanager-smtp-secret.yaml
+cloud/w10/temp/YAML-MANIFEST-GUIDE.md
+cloud/w10/END-TO-END-LAB-STEPS.md

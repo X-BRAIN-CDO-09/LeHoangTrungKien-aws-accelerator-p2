@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: violating-app
+  namespace: flipkart
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: violating-app
+  template:
+    metadata:
+      labels:
+        app: violating-app
+    spec:
+      containers:
+        - name: app
+          image: nginx:latest
+          securityContext:
+            privileged: true

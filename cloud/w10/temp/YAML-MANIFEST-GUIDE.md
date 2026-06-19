@@ -387,6 +387,7 @@ Lý do:
 
 | File | Làm gì |
 | --- | --- |
+| `security-rbac-admission/rbac/serviceaccounts.yaml` | Không còn tạo ServiceAccount cho `alice`, `bob`, `carol`; ba persona này là User subject trong RBAC binding. |
 | `security-rbac-admission/rbac/roles.yaml` | Tạo Role namespace-scoped cho alice. |
 | `security-rbac-admission/rbac/rolebindings.yaml` | Bind Role cho alice trong namespace `demo`. |
 | `security-rbac-admission/rbac/clusterrole-platform-viewer.yaml` | Tạo ClusterRole viewer dùng để xem tài nguyên toàn cluster nhưng không sửa/xóa. |
@@ -1025,7 +1026,7 @@ evidence/payments/limitrange-default-demo.yaml
 
 ## 7. Những dòng dễ nhầm
 
-### `--as alice` khác gì `--as system:serviceaccount:demo:alice`?
+### `--as alice` khác gì `--as alice`?
 
 Trong bản hiện tại, `alice` là Kubernetes User được giả lập bằng `--as`, không phải ServiceAccount. Vì vậy dùng:
 
@@ -1036,7 +1037,7 @@ Trong bản hiện tại, `alice` là Kubernetes User được giả lập bằn
 Nếu dùng:
 
 ```bash
---as system:serviceaccount:demo:alice
+--as alice
 ```
 
 thì Kubernetes hiểu là ServiceAccount `alice` trong namespace `demo`. Bản hiện tại không bind quyền cho ServiceAccount này.
@@ -1095,22 +1096,24 @@ GitHub repo
 Lớp phòng thủ đầu tiên là kiểm soát ai được quyền làm gì bằng RBAC, và kiểm tra manifest đầu vào bằng Gatekeeper trước khi object được tạo trong cluster.
 ```
 
-### 9.1. Vì sao không còn `rbac/serviceaccounts.yaml`?
+### 9.1. `rbac/serviceaccounts.yaml`
 
-Với yêu cầu gốc của Lab 1.1, `alice`, `bob`, `carol` là Kubernetes User, không phải ServiceAccount. Kubernetes không có manifest `kind: User` để tạo user nội bộ, nên GitOps chỉ cần tạo RBAC binding trỏ tới tên user.
+File này tạo identity giả lập cho lab.
 
 ```yaml
-subjects:
-  - kind: User
-    name: alice
-    apiGroup: rbac.authorization.k8s.io
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: alice
+  namespace: demo
 ```
 
 Giải thích từng dòng:
 
-- `kind: User`: subject là Kubernetes User.
-- `name: alice`: tên user được dùng khi impersonate bằng `--as alice`.
-- `apiGroup: rbac.authorization.k8s.io`: bắt buộc khi subject là User/Group trong RBAC.
+- `apiVersion: v1`: ServiceAccount là resource core của Kubernetes.
+- User `alice` không cần manifest tạo identity; Kubernetes nhận tên user qua authentication/impersonation và RBAC bind vào tên đó.
+- `metadata.name: alice`: tên identity là `alice`.
+- `metadata.namespace: demo`: alice chỉ tồn tại trong namespace `demo`.
 
 Vì vậy khi test phải dùng:
 
@@ -1121,7 +1124,7 @@ Vì vậy khi test phải dùng:
 không dùng:
 
 ```bash
---as system:serviceaccount:demo:alice
+--as alice
 ```
 
 ### 9.2. `rbac/roles.yaml`
@@ -1252,7 +1255,7 @@ roleRef:
 Giải thích:
 
 - `ClusterRoleBinding`: bind quyền ở phạm vi cluster.
-- `bob` là Kubernetes User được bind bằng `ClusterRoleBinding`.
+- `bob` vẫn là ServiceAccount trong namespace `demo`.
 - Nhưng vì bind bằng ClusterRoleBinding nên bob có thể `get pods -A`.
 
 Kết quả:
@@ -1667,9 +1670,20 @@ Giải thích:
 
 ### 13.2. `tenants/payments/rbac.yaml`
 
-File này gồm 2 object.
+File này gồm 3 object.
 
 Object 1:
+
+```yaml
+kind: RoleBinding
+metadata:
+  name: payments-dev-workload-manager
+  namespace: payments
+```
+
+Ý nghĩa: tạo identity cho developer/team Payments.
+
+Object 2:
 
 ```yaml
 kind: Role
@@ -1694,7 +1708,7 @@ Giải thích:
 - Không có `secrets`.
 - Không có `roles` hoặc `rolebindings`.
 
-Object 2:
+Object 3:
 
 ```yaml
 kind: RoleBinding
